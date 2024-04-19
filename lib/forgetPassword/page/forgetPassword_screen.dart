@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models.dart';
 import 'package:flutter/material.dart';
@@ -111,17 +113,18 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   }
 
   void onEmailSuccess() {
-    String email = ConstantVar.emailController.text;
+
     Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) =>  ResetPassword()));
+        MaterialPageRoute(builder: (context) =>  const ResetPassword()));
   }
 
   void onStatChange(state) {
     if (state is ForgetPasswordSuccessState) {
       onEmailSuccess();
+      toast("Email is found");
     } else if (state is ForgetPasswordFailureState) {
-      Toast(message: state.errorMessage);
+      toast(state.errorMessage);
     }
   }
 

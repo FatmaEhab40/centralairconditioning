@@ -1,4 +1,6 @@
 
+// ignore_for_file: overridden_fields
+
 class RegisterState {
   final bool isObscure;
   final String? errorMessage;

@@ -78,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             cursorColor: const Color(0xFF3E2723),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                Toast(message: "Name is required !");
+                                return "Name is required !";
                               }
                               return null;
                             }),
@@ -105,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             maxLength: 11,
                             validator: (value) {
                               if (value!.isEmpty) {
-                                Toast(message: "Phone is required !");
+                                return "Phone is required !";
                               }
                               return null;
                             }),
@@ -130,15 +130,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             cursorColor: const Color(0xFF3E2723),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                Toast(message: "Email is required !");
                                 return "Email is required !";
 
                               }
                               if (!value.contains("@")||
-                                  !value.contains("gmail")||
+                                  !value.contains("o6u")||
                                   !value.contains(".")||
-                                  !value.contains("com")) {
-                                Toast(message: "Email is wrong !");
+                                  !value.contains("edu")||
+                                  !value.contains(".")||
+                                  !value.contains("eg")
+                                  ) {
                                 return "Email is wrong !";
                               }
                               return null;
@@ -178,7 +179,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             cursorColor: const Color(0xFF3E2723),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                Toast(message: "Password is required !");
+                                return "Password is required !";
                               }
                               return null;
                             }
@@ -231,7 +232,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void onRegisterSuccess() {
-    Toast(message: "Account Created.");
+    toast("Account Created.");
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
@@ -240,7 +241,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (state is RegisterSuccessState) {
       onRegisterSuccess();
     } else if (state is RegisterFailureState) {
-      Toast(message: state.errorMessage);
+      toast(state.errorMessage);
     }
   }
 

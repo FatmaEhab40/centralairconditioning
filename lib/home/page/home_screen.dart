@@ -33,8 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: ConstantVar.backgroundPage,
       appBar: AppBar(
-
         backgroundColor: ConstantVar.backgroundPage,
+        iconTheme: const IconThemeData(
+          color: ConstantVar.backgroundPage,
+        ),
         title:GradientText(
           'Home',
           style: GoogleFonts.eagleLake(fontSize: 20.sp),
@@ -137,7 +139,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Column(
-          //crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(cubit.rooms[index].name,
               style:  TextStyle(

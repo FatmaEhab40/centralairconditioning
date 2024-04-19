@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             cursorColor: const Color(0xFF3E2723),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                Toast(message: "Email is required !");
+                                return "Email is required !";
                               }
                               return null;
                             }),
@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             cursorColor: const Color(0xFF3E2723),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                Toast(message: "Password is required !");
+                                return "Password is required !";
                               }
                               return null;
                             }),
@@ -211,8 +211,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void onStatChange(state) {
     if (state is LoginSuccessState) {
       onLoginSuccess();
+      toast("Success");
     } else if (state is LoginFailureState) {
-      Toast(message: state.errorMessage);
+      toast(state.errorMessage);
     }
   }
 

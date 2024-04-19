@@ -58,6 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    cubit.getUserData();
   }
 
   @override
@@ -168,8 +169,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 20),
                           TextFormField(
-                            enabled: false,
                             controller: ConstantVar.emailController,
+                            enabled: false,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               labelText: 'Email',
@@ -189,18 +190,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const Icon(Icons.email, color: Colors.brown),
                             ),
                             cursorColor: const Color(0xFF3E2723),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Email is required !";
-                              }
-                              if (!value.contains("@") ||
-                                  !value.contains("gmail") ||
-                                  !value.contains(".") ||
-                                  !value.contains("com")) {
-                                return "Email is wrong !";
-                              }
-                              return null;
-                            },
                           ),
                         ],
                       ),
@@ -222,20 +211,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ))),
     );
   }
-
   void saveUserData() {
     final userId = ConstantVar.auth.currentUser!.uid;
-    ConstantVar.firestore.collection("Users").doc(userId).update({
+    ConstantVar.firestore.collection("users").doc(userId).update({
       "Name": ConstantVar.nameController.text,
       "Phone": ConstantVar.phoneController.text,
       "Image": imageUrl,
     });
   }
 
-  void getUserData() {
-    final userId = ConstantVar.auth.currentUser!.uid;
-    ConstantVar.firestore.collection("Users").doc(userId).get();
-  }
 
   void pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -247,19 +231,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void saveImage(String imageUrl) {
     final userId = ConstantVar.auth.currentUser!.uid;
     ConstantVar.firestore
-        .collection("Users")
+        .collection("users")
         .doc(userId)
         .update({'imageUrl': imageUrl});
   }
 
-  void updateUi(Map<String, dynamic> map) {
-    ConstantVar.nameController.text = map["Name"];
-    ConstantVar.phoneController.text = map["Phone"];
-    ConstantVar.emailController.text = map["Email"];
-    setState(() {
-      imageUrl = map["Image"];
-    });
-  }
+  // void updateUi(Map<String, dynamic> map) {
+  //   ConstantVar.nameController.text = map["Name"];
+  //   ConstantVar.phoneController.text = map["Phone"];
+  //   ConstantVar.emailController.text = map["Email"];
+  //   setState(() {
+  //     imageUrl = map["Image"];
+  //   });
+  // }
 
   void uploadImage(File image) {
     setState(() {
@@ -270,13 +254,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .ref("profileImage/$userId")
         .putFile(image)
         .then((value) {
-      // Toast(message:"uploadImage");
+      toast("uploadImage");
       getImage();
     }).catchError((error) {
       setState(() {
         load = false;
       });
-      //Toast(message: error.toString());
+      toast(error.toString());
     });
   }
 
@@ -286,16 +270,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .ref("profileImage/$userId")
         .getDownloadURL()
         .then((imageUrl) {
-      //Toast(message:imageUrl);
+      toast(imageUrl);
       setState(() {
         this.imageUrl = imageUrl;
         load = false;
       });
       saveImage(imageUrl);
     }).catchError((error) {
-      //  Toast(message: error.toString());});
-    });
+      toast( error.toString());});
+    }
   }
 
 
-}
+

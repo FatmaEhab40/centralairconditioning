@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 class ForgetPasswordState {
   final bool isObscure;
   final String? errorMessage;

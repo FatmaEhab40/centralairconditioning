@@ -1,6 +1,4 @@
 import 'package:centralairconditioning/models.dart';
-import 'package:centralairconditioning/shared.dart';
-import 'package:centralairconditioning/table/page/table_screen.dart';
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -58,9 +56,6 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
  await Firebase.initializeApp();
-      //options: MyFirebaseOptions.currentPlatform);
-
-  //await PreferenceUtils.init();
 
   runApp(
     DevicePreview(

@@ -137,13 +137,13 @@ class _EditScreenState extends State<EditScreen> {
                             periodController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               periodController.dropDownValue!.name;
-                          print(selectedValue);
+                          //print(selectedValue);
                           dialogPeriodBuilder(context, selectedValue);
                         } else if (roomController.dropDownValue != null &&
                             roomController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               roomController.dropDownValue!.name;
-                          print(selectedValue);
+                         // print(selectedValue);
                           dialogRoomBuilder(context, selectedValue);
                         }
                       },
@@ -230,9 +230,9 @@ class _EditScreenState extends State<EditScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         String period = ConstantVar.periodController.text;
-                        print("3");
+                        //print("3");
                         cubit.updatePeriod(selectedValue, period);
-                        print("4, period => $period");
+                        //print("4, period => $period");
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
@@ -316,9 +316,9 @@ class _EditScreenState extends State<EditScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         String room = ConstantVar.roomController.text;
-                        print("3");
+                        //print("3");
                         cubit.updateRoom(selectedValue, room);
-                        print("4, room => $room");
+                        //print("4, room => $room");
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(

@@ -137,13 +137,13 @@ class _DeleteScreenState extends State<DeleteScreen> {
                             periodController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               periodController.dropDownValue!.name;
-                          print(selectedValue);
+                          //print(selectedValue);
                           cubit.deletePeriod(selectedValue);
                         } else if (roomController.dropDownValue != null &&
                             roomController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               roomController.dropDownValue!.name;
-                          print(selectedValue);
+                          //print(selectedValue);
                           cubit.deleteRoom(selectedValue);
                         }
                       },

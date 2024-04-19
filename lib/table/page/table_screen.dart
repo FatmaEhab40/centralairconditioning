@@ -1,9 +1,11 @@
+// ignore_for_file: unrelated_type_equality_checks
+import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:multiselect/multiselect.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
-import 'package:multiselect/multiselect.dart';
 import '../../models.dart';
 import '../manager/table_cubit.dart';
 import '../manager/table_state.dart';
@@ -13,60 +15,6 @@ import 'edit_screen.dart';
 
 final cubit = TableCubit();
 
-class MySchedule {
-  List<String> days = [
-    "Saturday",
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday"
-  ];
-  List<Periods> periods = [];
-  List<Rooms> rooms = [];
-  Map<String, Map<String, List<List<dynamic>>>> schedule = {
-    "days": {"periods": [], "rooms": []},
-    "periods": {"days": [], "rooms": []},
-    "rooms": {"days": [], "periods": []},
-  };
-
-  void saveSchedule() {
-    // Save the days map
-    ConstantVar.firestore.collection('schedule').add({
-      'name': 'Monday',
-      'periods': periods.map((period) => period.toJson()).toList(),
-      'rooms': rooms.map((room) => room.toJson()).toList(),
-    }).then((docRef) {
-      // Save the periods
-      for (var period in periods) {
-        final periodStore = period.toJson();
-        docRef.collection('periods').add(periodStore);
-      }
-
-      // Save the rooms
-      for (var room in rooms) {
-        final roomStore = room.toJson();
-        docRef.collection('rooms').add(roomStore);
-      }
-    });
-  }
-
-  void updateSelectedRooms(
-      int dayIndex, int periodIndex, List<Rooms> newRooms) {
-    schedule["days"]?["rooms"]![dayIndex][periodIndex] =
-        newRooms.map((e) => e.toString()).toList();
-    schedule["periods"]?["rooms"]![periodIndex][dayIndex] =
-        newRooms.map((e) => e.toString()).toList();
-    for (var room in newRooms) {
-      schedule["rooms"]?["days"]![rooms.indexOf(room)][dayIndex] =
-          newRooms.map((e) => e.toString()).toList();
-      schedule["rooms"]?["periods"]![rooms.indexOf(room)][periodIndex] =
-          newRooms.map((e) => e.toString()).toList();
-    }
-  }
-}
-
 class TableScreen extends StatefulWidget {
   const TableScreen({super.key});
 
@@ -75,16 +23,113 @@ class TableScreen extends StatefulWidget {
 }
 
 class _TableScreenState extends State<TableScreen> {
-  late MySchedule mySchedule;
-  List<Rooms> selectedRooms = [];
-  final periodController = TextEditingController();
-  final roomController = TextEditingController();
+  String dropDownValue = 'example value';
+  String checker(int i, int j) {
+    if (subjects[i][j][0] == const GrpcError.outOfRange()) {
+      return "empty";
+    } else {
+      return subjects[i][j][0];
+    }
+  }
+
   final containerHeight = 35.sp;
   final containerWidth = 46.sp;
+  final days = [
+    "Saturday",
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday"
+  ];
+  List<List<List<String>>> subjects = [
+    [
+      ["6006", "6106"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+    ],
+    [
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+    ],
+    [
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+    ],
+    [
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+    ],
+    [
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+    ],
+    [
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+    ],
+    [
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+    ],
+  ];
+  final periodController = TextEditingController();
+  final roomController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    mySchedule = MySchedule();
+    cubit.getPeriods();
+    cubit.getRooms();
   }
 
   @override
@@ -160,218 +205,193 @@ class _TableScreenState extends State<TableScreen> {
                               cubit.getRooms();
                             });
                       } else if (value == 1) {
-
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const EditScreen(),
                             )).then((value) => (value) {
-                          cubit.getPeriods();
-                          cubit.getRooms();
-                        });
-
+                              cubit.getPeriods();
+                              cubit.getRooms();
+                            });
                       } else if (value == 2) {
-
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const DeleteScreen(),
                             )).then((value) => (value) {
-                          cubit.getPeriods();
-                          cubit.getRooms();
-                        });
+                              cubit.getPeriods();
+                              cubit.getRooms();
+                            });
                       }
                     }),
               ],
             ),
-            body: SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        // Days\Periods
-                        SizedBox(
-                          height: containerHeight,
-                          width: containerWidth,
-                          child: CustomPaint(
-                              painter: RectanglePainter(),
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(4.0.sp),
-                                      child: Text("Period",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20.sp)),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(4.0.sp),
-                                      child: Text("Day",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20.sp)),
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        ),
-                        VerticalDivider(
-                            width: 5.sp, color: ConstantVar.backgroundPage),
-                        //Periods,Rooms
-                        // Expanded(
-                        //   child:
-                          SizedBox(
-                            height: containerHeight,
-                            width: 100.sp,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: mySchedule.periods.length,
-                              itemBuilder: (context, index) => Wrap(
-                                children: [
-                                  Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            height: containerHeight,
-                                            width: containerWidth,
-                                            decoration: const BoxDecoration(
-                                              color:
-                                                  ConstantVar.backgroundContainer,
-                                              shape: BoxShape.rectangle,
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                mySchedule
-                                                    .periods[index].duration,
-                                                textAlign: TextAlign.center,
+            body: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Container(
+                  height: 1000.sp,
+                  width: 1000.sp,
+                  padding: EdgeInsets.all(10.sp),
+                  child: PageView(
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                // Top header View
+                                SizedBox(
+                                  height: containerHeight,
+                                  width: containerWidth,
+                                  child: CustomPaint(
+                                    painter: RectanglePainter(),
+                                    child: Stack(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.topRight,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(4.0.sp),
+                                            child: Text("Period",
                                                 style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 19.sp),
-                                              ),
+                                                    fontSize: 20.sp)),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomLeft,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(4.0.sp),
+                                            child: Text("Day",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 20.sp)),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                //periods
+                                Expanded(
+                                  child: Container(
+                                    height: containerHeight,
+                                    margin: EdgeInsets.all(5.sp),
+                                    // child: SingleChildScrollView(
+                                    //   scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: List<Widget>.generate(
+                                        cubit.periods.length,
+                                        (index) => Container(
+                                          height: containerHeight,
+                                          width: containerWidth,
+                                          margin: EdgeInsets.all(5.sp),
+                                          decoration: const BoxDecoration(
+                                            color:
+                                                ConstantVar.backgroundContainer,
+                                            shape: BoxShape.rectangle,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              //"period ''${index}",
+                                              cubit.periods[index].duration,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 19.sp),
                                             ),
                                           ),
-                                          VerticalDivider(
-                                              width: 5.sp,
-                                              color: ConstantVar.backgroundPage),
-                                        ],
+                                        ),
                                       ),
-                                      Column(
-                                        children: List.generate(
-                                          mySchedule.days.length,
-                                          (index) => SizedBox(
-                                            height: containerHeight + 6.sp,
-                                            width: containerWidth + 5.sp,
-                                            child: Center(
-                                              child: DropDownMultiSelect(
-                                                selectedValues: selectedRooms,
-                                                selected_values_style:
-                                                    const TextStyle(
-                                                        color: Colors.brown),
-                                                onChanged: (List<Rooms> x) {
-                                                  // mySchedule
-                                                  //     .updateSelectedRooms(
-                                                  //         dayIndex,
-                                                  //         periodIndex,
-                                                  //         x); // pass the day index and period index
-                                                  // cubit
-                                                  //     .updateSelectedRooms(
-                                                  //         x);
-                                                },
-                                                options: cubit.rooms,
-                                                decoration: InputDecoration(
-                                                  iconColor: Colors.brown,
-                                                  label: const Text(
-                                                    'Select Rooms',
-                                                    textAlign: TextAlign.start,
-                                                    style: TextStyle(
-                                                        color: Colors.brown),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: const Color(
-                                                                  0xFF3E2723),
-                                                              width: 5.sp)),
-                                                  labelStyle: TextStyle(
-                                                      fontSize: 15.sp,
-                                                      color: Colors.brown,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  enabledBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: const Color(
-                                                            0xFF3E2723),
-                                                        width: 5.sp),
-                                                  ),
+                                    ),
+                                    // ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              // Added fixed size to scroll listView horizontal
+                              height: 500.sp,
+                              child: ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                itemCount: days.length,
+                                itemBuilder: (context, index1) => SizedBox(
+                                  height: containerHeight,
+                                  width: containerWidth,
+                                  child: Row(
+                                    children: [
+                                      //day
+                                      Container(
+                                        height: containerHeight,
+                                        width: containerWidth,
+                                        margin: EdgeInsets.all(5.sp),
+                                        decoration: const BoxDecoration(
+                                          color:
+                                              ConstantVar.backgroundContainer,
+                                          shape: BoxShape.rectangle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            days[index1],
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20.sp),
+                                          ),
+                                        ),
+                                      ),
+                                      //rooms
+                                      Expanded(
+                                        child: SizedBox(
+                                          height: containerHeight,
+                                          child: Row(
+                                            children: List<Widget>.generate(
+                                              cubit.periods.length,
+                                              (index2) => Container(
+                                                color: Colors.white,
+                                                child: Container(
+                                                  height: containerHeight,
+                                                  width: containerWidth,
+                                                  color: ConstantVar
+                                                      .backgroundPage,
+                                                  margin: EdgeInsets.all(5.sp),
+                                                  child: Center(
+                                                      child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 4.sp),
+                                                    child:DropdownButton<String>(
+                                                      value: subjects[index1][index2][0],
+                                                      onChanged: (String? newValue) {
+                                                      },
+                                                      items: List.generate(
+                                                        subjects[index1][index2].length,
+                                                            (int index) {
+                                                          return DropdownMenuItem<String>(
+                                                            value: subjects[index1][index2][index],
+                                                            child: Text(subjects[index1][index2][index]),
+
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  )),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      VerticalDivider(
-                                          width: 5.sp,
-                                          color: ConstantVar.backgroundPage),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        // ),
-                      ],
-                    ),
-                    Divider(height: 5.sp, color: ConstantVar.backgroundPage),
-                    //Days
-                    // SingleChildScrollView(
-                    //   physics: const ClampingScrollPhysics(),
-                    //   scrollDirection: Axis.horizontal,
-                    //   child:
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List.generate(
-                          mySchedule.days.length,
-                          (index) => Column(
-                            children: [
-                              Container(
-                                height: containerHeight,
-                                width: containerWidth,
-                                decoration: const BoxDecoration(
-                                  color: ConstantVar.backgroundContainer,
-                                  shape: BoxShape.rectangle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    mySchedule.days[index],
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20.sp),
-                                  ),
-                                ),
-                              ),
-                              Divider(
-                                  height: 5.sp,
-                                  color: ConstantVar.backgroundPage),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
-                    //),
-                  ],
-                ),
-              ),
+                    ],
+                  )),
             ),
           );
         },
@@ -385,12 +405,12 @@ class RectanglePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final backgroundPaint = Paint()
       ..color = ConstantVar.backgroundContainer
-      ..strokeWidth = 2.0
+      ..strokeWidth = 2.sp
       ..strokeCap = StrokeCap.round;
 
     final crossLine = Paint()
       ..color = Colors.white
-      ..strokeWidth = 2.0
+      ..strokeWidth = 5.sp
       ..strokeCap = StrokeCap.round;
 
     // Draw the rectangle
@@ -403,4 +423,136 @@ class RectanglePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(RectanglePainter oldDelegate) => false;
+}
+
+
+Future<void> dialogAddRoomBuilder(BuildContext context) {
+  List<Rooms> selectedValues = [];
+  return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: ConstantVar.backgroundPage,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(30))),
+          content: DropDownMultiSelect(
+            options: cubit.rooms,
+            selectedValues: selectedValues,
+            onChanged: (p0) {},
+          ),
+          actions: [
+            Center(
+                child: Column(
+              children: [
+                SizedBox(
+                  width: 50.sp,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      cubit.rooms.addAll(selectedValues);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 5.0.sp, vertical: 5.0.sp),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0.sp)),
+                    ),
+                    child: Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 5.sp),
+                SizedBox(
+                  width: 50.sp,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 5.0.sp, vertical: 5.0.sp),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0.sp)),
+                    ),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                    ),
+                  ),
+                ),
+              ],
+            )),
+          ],
+        );
+      });
+}
+
+Future<void> dialogDelRoomBuilder(BuildContext context) {
+  List<Rooms> selectedValues = [];
+  return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: ConstantVar.backgroundPage,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(30))),
+          content: DropDownMultiSelect(
+            options: cubit.rooms,
+            selectedValues: selectedValues,
+            onChanged: (p0) {},
+          ),
+          actions: [
+            Center(
+                child: Column(
+              children: [
+                SizedBox(
+                  width: 50.sp,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      cubit.rooms
+                          .removeWhere((room) => selectedValues.contains(room));
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 5.0.sp, vertical: 5.0.sp),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0.sp)),
+                    ),
+                    child: Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 5.sp),
+                SizedBox(
+                  width: 50.sp,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 5.0.sp, vertical: 5.0.sp),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0.sp)),
+                    ),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                    ),
+                  ),
+                ),
+              ],
+            )),
+          ],
+        );
+      });
 }

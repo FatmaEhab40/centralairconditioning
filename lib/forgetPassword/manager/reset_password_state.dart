@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 class ResetPasswordState {
   final bool isObscure1;
   final bool isObscure2;

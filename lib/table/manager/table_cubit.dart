@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:centralairconditioning/table/manager/table_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models.dart';
-import '../../shared.dart';
 
 
 class TableCubit extends Cubit<TableState> {
@@ -13,7 +11,6 @@ class TableCubit extends Cubit<TableState> {
   List<Rooms> rooms = [];
 
   void getPeriods() {
-    final userId= ConstantVar.auth.currentUser!.uid;
     ConstantVar.firestore.collection("periods")
         .get()
         .then((value) {
@@ -76,7 +73,6 @@ class TableCubit extends Cubit<TableState> {
   }
 
   void getRooms() {
-    final userId= ConstantVar.auth.currentUser!.uid;
     ConstantVar.firestore.collection("rooms")
         .get()
         .then((value) {

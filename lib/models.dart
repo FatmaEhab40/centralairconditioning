@@ -5,6 +5,7 @@ import 'package:firebase_core_platform_interface/firebase_core_platform_interfac
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MyFirebaseOptions {
   final String apiKey;
@@ -70,26 +71,15 @@ class ConstantVar{
 
 }
 
-class Toast {
-  String message;
-  Color backgroundColor;
-  Color textColor;
-  double fontSize;
-
-  Toast({this.backgroundColor=Colors.brown,
-    this.textColor=Colors.white,
-    this.fontSize=16.0,
-    required this.message}) ;
-
-  void toast(message,backgroundColor,textColor,fontSize) {
-    Fluttertoast.showToast(
-        msg: message,
-        backgroundColor: backgroundColor,
-        textColor: textColor,
-        fontSize: fontSize
-    );
-  }
+void toast(message) {
+  Fluttertoast.showToast(
+      msg: message,
+      backgroundColor: Colors.brown,
+      textColor: Colors.white,
+      fontSize: 16.sp
+  );
 }
+
 
 class Periods {
   String duration = "";

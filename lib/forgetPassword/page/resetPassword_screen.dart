@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -85,7 +87,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             cursorColor: const Color(0xFF3E2723),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                Toast(message: "Password is required !");
+                                return "Password is required !";
                               }
                               return null;
                             }),
@@ -124,13 +126,11 @@ class _ResetPasswordState extends State<ResetPassword> {
                             cursorColor: const Color(0xFF3E2723),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                Toast(
-                                    message:
-                                    "Confirm Password is required !");
+                                return
+                                    "Confirm Password is required !";
                               }else if(ConstantVar.passwordController2!=ConstantVar.passwordController1){
-                                Toast(
-                                    message:
-                                    "Confirm Password is wrong !");
+                                return
+                                    "Confirm Password is wrong !";
                               }
                               return null;
                             }),
@@ -170,8 +170,10 @@ class _ResetPasswordState extends State<ResetPassword> {
   void onStatChange(state) {
     if (state is ResetPasswordSuccessState) {
       onResetPasswordSuccess();
+      toast("Success");
     } else if (state is ResetPasswordFailureState) {
-      Toast(message: state.errorMessage);
+      toast(state.errorMessage);
+      toast("Failure");
     }
   }
 

@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models.dart';
-import '../../shared.dart';
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
@@ -11,9 +10,7 @@ class HomeCubit extends Cubit<HomeState> {
 
 
   void getRooms() {
-    final userId= ConstantVar.auth.currentUser!.uid;
     ConstantVar.firestore.collection("rooms")
-        .where('userId',isEqualTo:userId)
         .get()
         .then((value) {
       rooms.clear();
@@ -73,16 +70,5 @@ class HomeCubit extends Cubit<HomeState> {
       emit(UpdateRoomsFailureState(e.toString()));
     }
   }
-  //Shared Preference
-  // void getRooms() async {
-  //   try {
-  //     List<Rooms> roomsList = await PreferenceUtils.getRooms(PrefKeys.rooms);
-  //     rooms.clear();
-  //     rooms.addAll(roomsList);
-  //     emit(GetRoomsSuccessState());
-  //   } catch (error) {
-  //     emit(GetRoomsFailureState(error.toString()));
-  //   }
-  // }
 
 }

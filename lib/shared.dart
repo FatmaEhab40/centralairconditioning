@@ -99,9 +99,9 @@ class PreferenceUtils {
       return defValue;
     }
     String? periodsString = prefs.getString(key.name);
-    print(periodsString);
+    //print(periodsString);
     List<String> periodsStrings = periodsString?.split(',') ?? defValue.map((p) => json.encode(p.toJson())).toList();
-    print(periodsStrings);
+   // print(periodsStrings);
     List<Periods> periodsList = periodsStrings.map((p) => Periods.fromMap(json.decode(p))).toList();
     return periodsList;
   }
