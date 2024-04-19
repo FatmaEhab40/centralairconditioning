@@ -32,8 +32,8 @@ class _TableScreenState extends State<TableScreen> {
     }
   }
 
-  final containerHeight = 35.sp;
-  final containerWidth = 46.sp;
+  final containerHeight = 40.sp;
+  final containerWidth = 50.sp;
   final days = [
     "Saturday",
     "Sunday",
@@ -124,7 +124,8 @@ class _TableScreenState extends State<TableScreen> {
   ];
   final periodController = TextEditingController();
   final roomController = TextEditingController();
-
+  List<String> selectedRooms = [];
+  
   @override
   void initState() {
     super.initState();
@@ -229,8 +230,8 @@ class _TableScreenState extends State<TableScreen> {
             body: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
-                  height: 1000.sp,
-                  width: 1000.sp,
+                  height: (containerHeight*(days.length+1))+(10.sp*(days.length+2)),
+                  width: (containerWidth*(cubit.periods.length+1))+(12.sp*(cubit.periods.length+2)),
                   padding: EdgeInsets.all(10.sp),
                   child: PageView(
                     children: [
@@ -361,18 +362,153 @@ class _TableScreenState extends State<TableScreen> {
                                                         EdgeInsets.symmetric(
                                                             horizontal: 4.sp),
                                                     child:DropdownButton<String>(
-                                                      value: subjects[index1][index2][0],
-                                                      onChanged: (String? newValue) {
+                                                      value: dropDownValue=subjects[index1][index2][0],
+                                                      onChanged: (String? newValue){
+                                                        setState(() {
+                                                          dropDownValue = newValue!;
+                                                        });
                                                       },
-                                                      items: List.generate(
-                                                        subjects[index1][index2].length,
-                                                            (int index) {
-                                                          return DropdownMenuItem<String>(
-                                                            value: subjects[index1][index2][index],
-                                                            child: Text(subjects[index1][index2][index]),
+                                                      items: List.generate(subjects[index1][index2].length, (int index) {
+                                                        return DropdownMenuItem(
+                                                          value: subjects[index1][index2][index],
+                                                          child: Text(subjects[index1][index2][index]),
+                                                        );
+                                                      })..add(DropdownMenuItem(
+                                                        value: "add",
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (BuildContext context) {
+                                                                return AlertDialog(
+                                                                  title: const Text("Hall list"),
+                                                                  content: DropDownMultiSelect<String>(
+                                                                    selectedValues: selectedRooms,
+                                                                    selected_values_style:
+                                                                    const TextStyle(
+                                                                        color: Colors.brown),
+                                                                    onChanged: (List<String> newValue2){
+                                                                      selectedRooms = newValue2;
+                                                                    },
+                                                                    options: existenceChecker(index1, index2),
+                                                                    decoration: InputDecoration(
+                                                                      iconColor: Colors.brown,
+                                                                      label: const Text(
+                                                                        'Select Rooms',
+                                                                        textAlign: TextAlign.start,
+                                                                        style: TextStyle(
+                                                                            color: Colors.brown),
+                                                                      ),
+                                                                      focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                              color: const Color(
+                                                                                  0xFF3E2723),
+                                                                              width: 5.sp)),
+                                                                      labelStyle: TextStyle(
+                                                                          fontSize: 15.sp,
+                                                                          color: Colors.brown,
+                                                                          fontWeight:
+                                                                          FontWeight.bold),
+                                                                      enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                        borderSide: BorderSide(
+                                                                            color: const Color(
+                                                                                0xFF3E2723),
+                                                                            width: 5.sp),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  actions: <Widget>[
+                                                                    ElevatedButton(
+                                                                        onPressed: (){
+                                                                          for(int i = 0 ; i < selectedRooms.length; i++){
+                                                                            if (selectedRooms[i].endsWith(" exist")) {
+                                                                              selectedRooms[i] = selectedRooms[i].substring(0, selectedRooms[i].length - " exist".length);
+                                                                            }
+                                                                          }
+                                                                          for(int i = 0 ; i < selectedRooms.length ; i++){
+                                                                            for(int j = 0 ; j < subjects[index1][index2].length ; j++){
+                                                                              if(subjects[index1][index2][j]==selectedRooms[i]){
+                                                                                subjects[index1][index2].removeAt(j);
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                          if(subjects[index1][index2].isEmpty){
+                                                                            subjects[index1][index2].add("empty");
+                                                                          }
+                                                                          selectedRooms.clear();
+                                                                          setState(() {});
+                                                                          Navigator.of(context).pop();
+                                                                        },
+                                                                        child: const Text("Delete")
+                                                                    ),
+                                                                    ElevatedButton(
+                                                                      onPressed: () async {
+                                                                        for(int i = 0 ; i < selectedRooms.length; i++){
+                                                                          if (selectedRooms[i].endsWith(" exist")) {
+                                                                            selectedRooms[i] = selectedRooms[i].substring(0, selectedRooms[i].length - " exist".length);
+                                                                        }
+                                                                        }
+                                                                        if(subjects[index1][index2][0]=="empty"){
+                                                                          for (int i = 0; i < selectedRooms.length; i++) {
+                                                                            subjects[index1][index2].add(selectedRooms[i]);
+                                                                          }
+                                                                          subjects[index1][index2].removeAt(0);
+                                                                        }
+                                                                        else {
+                                                                          for(int i = 0 ; i < selectedRooms.length ; i++){
+                                                                            for(int j = 0 ; j < subjects[index1][index2].length ; j++){
+                                                                              if(subjects[index1][index2][j]==selectedRooms[i]){
+                                                                                selectedRooms.removeAt(i);
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                          if(selectedRooms.isNotEmpty){
+                                                                          for (int i = 0; i < selectedRooms.length; i++) {
+                                                                            subjects[index1][index2].add(selectedRooms[i]);
+                                                                          }
+                                                                          }
+                                                                        }
+                                                                        selectedRooms.clear();
+                                                                        setState(() {});
+                                                                        Navigator.of(context).pop();
+                                                                      },
 
-                                                          );
-                                                        },
+                                                                      // onPressed: () {
+                                                                      //   if(subjects[index1][index2][0]=="empty"){
+                                                                      //     for (int i = 0; i < selectedRooms.length; i++) {
+                                                                      //       subjects[index1][index2].add(selectedRooms[i]);
+                                                                      //     }
+                                                                      //     subjects[index1][index2].removeAt(0);
+                                                                      //   }
+                                                                      //   else{
+                                                                      //     for (int i = 0; i < selectedRooms.length; i++) {
+                                                                      //       subjects[index1][index2].add(selectedRooms[i]);
+                                                                      //     }}
+                                                                      //   selectedRooms.clear();
+                                                                      //   setState(() {});
+                                                                      //   Navigator.of(context).pop();
+                                                                      // },
+                                                                      child: const Text("Add"),
+                                                                    ),
+                                                                    TextButton(
+                                                                      onPressed: () {
+                                                                        selectedRooms.clear();
+                                                                        Navigator.of(context).pop(); // Close the pop-up
+                                                                      },
+                                                                      child: const Text("Close"),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+
+                                                          child: Text("$index1""$index2"),
+                                                        ),
+                                                      )
+
                                                       ),
                                                     ),
                                                   )),
@@ -397,6 +533,30 @@ class _TableScreenState extends State<TableScreen> {
         },
       ),
     );
+  }
+  // static Future<bool> dubChecker(List<String> l1, List<String> l2) async {
+  //   for (int i = 0; i < l2.length; i++) {
+  //     for (int j = 0; j < l1.length; j++) {
+  //       if (l1[j] != l2[i]) {
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     }
+  //   }
+  //   return false; // Add a return statement outside the loops
+  // }
+  List<String> existenceChecker(int i, int j) {
+    List<String> roomNames = cubit.rooms.map((room) => room.name).toList();
+
+    for (int y = 0; y < roomNames.length; y++) {
+      for (int z = 0; z < subjects[i][j].length; z++) {
+        if (subjects[i][j][z] == roomNames[y]) {
+          roomNames[y] = "${roomNames[y]} exist";
+        }
+      }
+    }
+    return roomNames;
   }
 }
 
@@ -490,6 +650,7 @@ Future<void> dialogAddRoomBuilder(BuildContext context) {
         );
       });
 }
+
 
 Future<void> dialogDelRoomBuilder(BuildContext context) {
   List<Rooms> selectedValues = [];

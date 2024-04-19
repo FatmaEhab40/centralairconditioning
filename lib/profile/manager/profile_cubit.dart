@@ -6,24 +6,35 @@ import 'profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileInitial());
   List<User> myData = [];
-  String imageUrl = "";
 
-
-  void getUserData() {
-    final userId = ConstantVar.auth.currentUser!.uid;
-    ConstantVar.firestore.collection("Users")
-        .where('userId', isEqualTo: userId)
+  void getUserData(){
+    final userId=ConstantVar.auth.currentUser!.uid;
+    ConstantVar.firestore.collection("users").doc(userId)
         .get()
         .then((value) {
-      myData.clear();
-      for (var document in value.docs) {
-        final user = User.fromMap(document.data());
-        myData.add(user);
-      }
+      updateUi(value.data()!);
       emit(GetUsersSuccessState());
-    }).catchError((error) {
-      emit(GetUsersFailureState(error.toString()));
+    })
+        .catchError((error){emit(GetUsersFailureState(error.toString()));});
+  }
+
+  void updateUserData()  {
+    final userId = ConstantVar.auth.currentUser!.uid;
+     ConstantVar.firestore.collection("users").doc(userId).update({
+      "Name": ConstantVar.nameController.text,
+      "phone": ConstantVar.phoneController.text,
+    }).then((value) {
+      toast("Done");
+      emit(UpdateUsersSuccessState());})
+        .catchError((error){
+      emit(UpdateUsersFailureState(error.toString()));
     });
+
+  }
+  void updateUi(Map<String, dynamic>map) {
+    ConstantVar.nameController.text = map["Name"];
+    ConstantVar.phoneController.text = map["phone"];
+    ConstantVar.emailController.text = map["email"];
   }
 }
 

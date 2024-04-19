@@ -10,20 +10,6 @@ class GetUsersFailureState extends ProfileState {
   GetUsersFailureState(this.errorMessage);
 }
 
-class DeleteUsersSuccessState extends ProfileState {}
-
-class DeleteUsersFailureState extends ProfileState {
-  final String errorMessage;
-  DeleteUsersFailureState(this.errorMessage);
-}
-
-class AddUsersSuccessState extends ProfileState {}
-
-class AddUsersFailureState extends ProfileState {
-  final String errorMessage;
-  AddUsersFailureState(this.errorMessage);
-}
-
 class UpdateUsersSuccessState extends ProfileState {}
 
 class UpdateUsersFailureState extends ProfileState {

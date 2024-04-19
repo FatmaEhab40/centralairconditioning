@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../../models.dart';
@@ -52,8 +50,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String imageUrl = "";
-  bool load = false;
 
   @override
   void initState() {
@@ -63,11 +59,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => cubit,
-      child: Scaffold(
-          backgroundColor: ConstantVar.backgroundPage,
-          appBar: AppBar(
+    return Scaffold(
+        backgroundColor: ConstantVar.backgroundPage,
+        appBar: AppBar(
             backgroundColor: ConstantVar.backgroundPage,
             title: GradientText(
               'Profile',
@@ -79,125 +73,97 @@ class _ProfileScreenState extends State<ProfileScreen> {
             iconTheme: const IconThemeData(
               color: Colors.brown,
             )
-          ),
-          body: Padding(
-              padding: const EdgeInsets.all(30),
-              child: BlocBuilder<ProfileCubit, ProfileState>(
-                buildWhen: (previous, current) {
-                  return current is GetUsersSuccessState ||
-                      current is UpdateUsersSuccessState;
-                },
-                builder: (context, state) {
-                  return Column(
+        ),
+        body: BlocProvider(
+          create: (context) => cubit,
+          child: BlocBuilder<ProfileCubit, ProfileState>(
+            buildWhen: (previous, current) {
+              return current is GetUsersSuccessState||
+                  current is UpdateUsersSuccessState;
+            },
+            builder: (context, state) {
+              return Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: Column(
                     children: [
-                      if (imageUrl.isEmpty)
-                        InkWell(
-                          onTap: () => pickImage(),
-                          child: const CircleAvatar(
-                              radius: 50,
-                              backgroundColor: Colors.brown,
-                              child: Icon(
-                                Icons.person,
-                                size: 45,
-                                color: Colors.white,
-                              )),
-                        )
-                      else
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            InkWell(
-                              onTap: () => pickImage(),
-                              child: CircleAvatar(
-                                radius: 50,
-                                backgroundImage: NetworkImage(imageUrl),
-                              ),
-                            ),
-                            Visibility(
-                                visible: load,
-                                child: const CircularProgressIndicator())
-                          ],
+                      TextFormField(
+                        controller: ConstantVar.nameController,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          labelText: 'Name',
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: const Color(0xFF3E2723),
+                                  width: 5.sp)),
+                          labelStyle: const TextStyle(
+                              color: Colors.brown,
+                              fontWeight: FontWeight.bold),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: const Color(0xFF3E2723),
+                                width: 5.sp),
+                          ),
+                          prefixIcon:
+                          const Icon(Icons.person, color: Colors.brown),
                         ),
+                        cursorColor: const Color(0xFF3E2723),
+                      ),
                       const SizedBox(height: 20),
-                      Column(
-                        children: [
-                          TextFormField(
-                            controller: ConstantVar.nameController,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              labelText: 'Name',
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: const Color(0xFF3E2723),
-                                      width: 5.sp)),
-                              labelStyle: const TextStyle(
-                                  color: Colors.brown,
-                                  fontWeight: FontWeight.bold),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: const Color(0xFF3E2723),
-                                    width: 5.sp),
-                              ),
-                              prefixIcon:
-                              const Icon(Icons.person, color: Colors.brown),
-                            ),
-                            cursorColor: const Color(0xFF3E2723),
+                      TextFormField(
+                        controller: ConstantVar.phoneController,
+                        maxLength: 11,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          labelText: 'Phone',
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: const Color(0xFF3E2723),
+                                  width: 5.sp)),
+                          labelStyle: const TextStyle(
+                              color: Colors.brown,
+                              fontWeight: FontWeight.bold),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: const Color(0xFF3E2723),
+                                width: 5.sp),
                           ),
-                          const SizedBox(height: 20),
-                          TextFormField(
-                            controller: ConstantVar.phoneController,
-                            maxLength: 11,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              labelText: 'Phone',
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: const Color(0xFF3E2723),
-                                      width: 5.sp)),
-                              labelStyle: const TextStyle(
-                                  color: Colors.brown,
-                                  fontWeight: FontWeight.bold),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: const Color(0xFF3E2723),
-                                    width: 5.sp),
-                              ),
-                              prefixIcon: const Icon(Icons.phone_android,
-                                  color: Colors.brown),
-                            ),
-                            cursorColor: const Color(0xFF3E2723),
+                          prefixIcon: const Icon(Icons.phone_android,
+                              color: Colors.brown),
+                        ),
+                        cursorColor: const Color(0xFF3E2723),
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: ConstantVar.emailController,
+                        enabled: false,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: const Color(0xFF3E2723),
+                                  width: 5.sp)),
+                          labelStyle: const TextStyle(
+                              color: Colors.brown,
+                              fontWeight: FontWeight.bold),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: const Color(0xFF3E2723),
+                                width: 5.sp),
                           ),
-                          const SizedBox(height: 20),
-                          TextFormField(
-                            controller: ConstantVar.emailController,
-                            enabled: false,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              labelText: 'Email',
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: const Color(0xFF3E2723),
-                                      width: 5.sp)),
-                              labelStyle: const TextStyle(
-                                  color: Colors.brown,
-                                  fontWeight: FontWeight.bold),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: const Color(0xFF3E2723),
-                                    width: 5.sp),
-                              ),
-                              prefixIcon:
-                              const Icon(Icons.email, color: Colors.brown),
-                            ),
-                            cursorColor: const Color(0xFF3E2723),
-                          ),
-                        ],
+                          prefixIcon:
+                          const Icon(Icons.email, color: Colors.brown),
+                        ),
+                        cursorColor: const Color(0xFF3E2723),
                       ),
                       const SizedBox(height: 10),
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton(
-                          onPressed: () => saveUserData(),
+                          onPressed: () {
+                            cubit.updateUserData();
+                            cubit.getUserData();
+                          },
                           style: OutlinedButton.styleFrom(
                               shape: const StadiumBorder(),
                               backgroundColor: Colors.brown),
@@ -206,80 +172,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ],
-                  );
-                },
-              ))),
-    );
+                  ));
+            },
+          ),
+        ));
   }
-  void saveUserData() {
-    final userId = ConstantVar.auth.currentUser!.uid;
-    ConstantVar.firestore.collection("users").doc(userId).update({
-      "Name": ConstantVar.nameController.text,
-      "Phone": ConstantVar.phoneController.text,
-      "Image": imageUrl,
-    });
-  }
-
-
-  void pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? file = await picker.pickImage(source: ImageSource.gallery);
-    final image = File(file!.path);
-    uploadImage(image);
-  }
-
-  void saveImage(String imageUrl) {
-    final userId = ConstantVar.auth.currentUser!.uid;
-    ConstantVar.firestore
-        .collection("users")
-        .doc(userId)
-        .update({'imageUrl': imageUrl});
-  }
-
-  // void updateUi(Map<String, dynamic> map) {
-  //   ConstantVar.nameController.text = map["Name"];
-  //   ConstantVar.phoneController.text = map["Phone"];
-  //   ConstantVar.emailController.text = map["Email"];
-  //   setState(() {
-  //     imageUrl = map["Image"];
-  //   });
-  // }
-
-  void uploadImage(File image) {
-    setState(() {
-      load = true;
-    });
-    final userId = ConstantVar.auth.currentUser!.uid;
-    ConstantVar.storage
-        .ref("profileImage/$userId")
-        .putFile(image)
-        .then((value) {
-      toast("uploadImage");
-      getImage();
-    }).catchError((error) {
-      setState(() {
-        load = false;
-      });
-      toast(error.toString());
-    });
-  }
-
-  void getImage() {
-    final userId = ConstantVar.auth.currentUser!.uid;
-    ConstantVar.storage
-        .ref("profileImage/$userId")
-        .getDownloadURL()
-        .then((imageUrl) {
-      toast(imageUrl);
-      setState(() {
-        this.imageUrl = imageUrl;
-        load = false;
-      });
-      saveImage(imageUrl);
-    }).catchError((error) {
-      toast( error.toString());});
-    }
-  }
+}
 
 
 
