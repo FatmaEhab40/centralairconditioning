@@ -89,6 +89,11 @@ class _ResetPasswordState extends State<ResetPassword> {
                               if (value!.isEmpty) {
                                 return "Password is required !";
                               }
+                              else if (value.length<=10 &&
+                                  !value.contains("@")||
+                                  !value.contains("_")) {
+                                return "Password is weak !";
+                              }
                               return null;
                             }),
                         SizedBox(height: 20.sp),

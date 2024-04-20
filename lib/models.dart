@@ -81,6 +81,19 @@ void toast(message) {
 }
 
 
+class Scadule {
+  List<String> rooms = [];
+  String id = "";
+
+  Scadule(this.rooms, this.id);
+
+  Map<String, dynamic> toMap() {
+
+    return {
+    };
+  }
+}
+
 class Periods {
   String duration = "";
   String id = "";

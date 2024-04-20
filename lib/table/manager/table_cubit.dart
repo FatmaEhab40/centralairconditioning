@@ -24,17 +24,17 @@ class TableCubit extends Cubit<TableState> {
     {emit(GetPeriodsFailureState(error.toString()));});
   }
 
-  void deletePeriod(String idPeriod)async{
+  void deletePeriod(String duration)async{
     try {
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
       await ConstantVar.firestore.collection("periods")
-          .where('id', isEqualTo: idPeriod).get();
+          .where('duration', isEqualTo: duration).get();
       if (querySnapshot.docs.isNotEmpty) {
         final String documentId = querySnapshot.docs.first.id;
         await ConstantVar.firestore.collection("periods")
             .doc(documentId)
             .delete();
-        periods.removeWhere((element) => element.id== idPeriod);
+        periods.removeWhere((element) => element.id== duration);
         emit(DeletePeriodsSuccessState());
       }else {
         emit(DeletePeriodsFailureState('No period found with this id'));
@@ -86,17 +86,17 @@ class TableCubit extends Cubit<TableState> {
     {emit(GetRoomsFailureState(error.toString()));});
   }
 
-  void deleteRoom(String idRoom)async{
+  void deleteRoom(String name)async{
     try {
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
       await ConstantVar.firestore.collection("rooms")
-          .where('id', isEqualTo: idRoom).get();
+          .where('name', isEqualTo: name).get();
       if (querySnapshot.docs.isNotEmpty) {
         final String documentId = querySnapshot.docs.first.id;
         await ConstantVar.firestore.collection("rooms")
             .doc(documentId)
             .delete();
-        rooms.removeWhere((element) => element.id== idRoom);
+        rooms.removeWhere((element) => element.id== name);
         emit(DeleteRoomsSuccessState());
       }else {
         emit(DeleteRoomsFailureState('No room found with this id'));

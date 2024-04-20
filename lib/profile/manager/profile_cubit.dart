@@ -20,7 +20,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   void updateUserData()  {
     final userId = ConstantVar.auth.currentUser!.uid;
-     ConstantVar.firestore.collection("users").doc(userId).update({
+    ConstantVar.firestore.collection("users").doc(userId).update({
       "Name": ConstantVar.nameController.text,
       "phone": ConstantVar.phoneController.text,
     }).then((value) {

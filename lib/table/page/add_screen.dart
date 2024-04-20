@@ -89,7 +89,8 @@ class _AddScreenState extends State<AddScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-
+                    addPeriod();
+                    setState(() {});
                     Navigator.pop(context);
 
                   },
