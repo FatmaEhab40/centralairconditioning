@@ -139,13 +139,15 @@ class _DeleteScreenState extends State<DeleteScreen> {
                               periodController.dropDownValue!.name;
                           //print(selectedValue);
                           cubit.deletePeriod(selectedValue);
-                        } else if (roomController.dropDownValue != null &&
+                        }
+                        else if (roomController.dropDownValue != null &&
                             roomController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               roomController.dropDownValue!.name;
                           //print(selectedValue);
                           cubit.deleteRoom(selectedValue);
                         }
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.brown,
@@ -161,25 +163,25 @@ class _DeleteScreenState extends State<DeleteScreen> {
                     ),
                   ),
                   SizedBox(height: 5.sp),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 5.0.sp, vertical: 5.0.sp),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0.sp)),
-                      ),
-                      child: Text(
-                        "Save",
-                        style: TextStyle(color: Colors.white, fontSize: 20.sp),
-                      ),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: ElevatedButton(
+                  //     onPressed: () {
+                  //       Navigator.pop(context);
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: Colors.brown,
+                  //       padding: EdgeInsets.symmetric(
+                  //           horizontal: 5.0.sp, vertical: 5.0.sp),
+                  //       shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(10.0.sp)),
+                  //     ),
+                  //     child: Text(
+                  //       "Save",
+                  //       style: TextStyle(color: Colors.white, fontSize: 20.sp),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

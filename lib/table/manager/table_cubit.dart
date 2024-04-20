@@ -44,27 +44,38 @@ class TableCubit extends Cubit<TableState> {
     }
   }
 
-  void addPeriod({required Periods item}){
-    periods.add(item);
-    emit(AddPeriodsSuccessState());
+  void addPeriod()async{
+    String duration = ConstantVar.periodController.text;
+    String id = DateTime.now().microsecondsSinceEpoch.toString();
+    final period = Periods(duration, id);
+    await ConstantVar.firestore
+        .collection("periods")
+        .doc(id)
+        .set(period.toMap())
+        .then((value) {
+      periods.add(period);
+      emit(AddPeriodsSuccessState());
+    }).catchError((error){
+      emit(AddPeriodsFailureState("error"));
+    });
+
   }
 
-  void updatePeriod(String idPeriod, String updateValue) async {
-    String period = updateValue;
+  void updatePeriod(String period, String updateValue) async {
     try {
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
       await ConstantVar.firestore.collection("periods")
-          .where('id', isEqualTo: idPeriod).get();
-
+          .where('duration', isEqualTo: period).get();
       if (querySnapshot.docs.isNotEmpty) {
         final String documentId = querySnapshot.docs.first.id;
         await ConstantVar.firestore.collection("periods")
             .doc(documentId).update({
-          'duration': period,
+          'duration': updateValue,
         }).then((value) {
           emit(UpdatePeriodsSuccessState());
         });
-      } else {
+      }
+      else {
         emit(UpdatePeriodsFailureState('No period found with this id'));
       }
     } catch (e) {
@@ -106,9 +117,21 @@ class TableCubit extends Cubit<TableState> {
     }
   }
 
-  void addRoom({required Rooms item}){
-    rooms.add(item);
-    emit(AddRoomsSuccessState());
+  void addRoom()async{
+    String name = ConstantVar.roomController.text;
+    String id = DateTime.now().microsecondsSinceEpoch.toString();
+    final room = Rooms(name, id);
+    await ConstantVar.firestore
+        .collection("rooms")
+        .doc(id)
+        .set(room.toMap())
+        .then((value) {
+      rooms.add(room);
+      emit(AddRoomsSuccessState());
+    }).catchError((error){
+      emit(AddRoomsFailureState("error"));
+    });
+
   }
 
   void updateRoom(String idPeriod, String updateValue) async {
@@ -138,137 +161,4 @@ class TableCubit extends Cubit<TableState> {
     emit(TableUpdated(newRooms: newRooms));
   }
 
-
-//Shared Preference
-//   void getPeriods() async {
-//     try {
-//       await PreferenceUtils.init();
-//       List<Periods> periodsList = await PreferenceUtils.getPeriods(PrefKeys.periods) ;
-//       periods.clear();
-//       periods.addAll(periodsList);
-//       emit(GetPeriodsSuccessState());
-//     } catch (error) {
-//       emit(GetPeriodsFailureState(error.toString()));
-//     }
-//   }
-//   void deletePeriod(String idPeriod) async {
-//     try {
-//       List<Periods> periodsList = PreferenceUtils.getPeriods(PrefKeys.periods) as List<Periods>;
-//       if (periodsList.isNotEmpty) {
-//         List<Periods> updatedPeriodsList = periodsList.map((e) => Periods.fromMap(jsonDecode(e as String))).toList();
-//         final int index = updatedPeriodsList.indexWhere((element) => element.id == idPeriod);
-//         if (index >= 0) {
-//           updatedPeriodsList.removeAt(index);
-//           List<String> encodedRoomsList = updatedPeriodsList.map((e) => jsonEncode(e.toMap())).toList();
-//           PreferenceUtils.setRooms(PrefKeys.rooms, encodedRoomsList.cast<Rooms>());
-//           emit(DeletePeriodsSuccessState());
-//         } else {
-//           emit(DeletePeriodsFailureState('No periods found with this id'));
-//         }
-//       } else {
-//         emit(DeletePeriodsFailureState('No periods found'));
-//       }
-//     } catch (e) {
-//       emit(DeletePeriodsFailureState(e.toString()));
-//     }
-//   }
-//   void addPeriod({required Periods item}) async {
-//     try {
-//       periods.add(item);
-//       List<Periods> periodsStrings = periods;
-//       print("periodsStrings: $periodsStrings");
-//       await PreferenceUtils.setPeriods(PrefKeys.periods, periodsStrings);
-//       emit(AddPeriodsSuccessState());
-//     } catch (e) {
-//       emit(AddPeriodsFailureState(e.toString()));
-//     }
-//   }
-//   void updatePeriod(String idPeriod, String updateValue) async {
-//     try {
-//       List<Periods> periodsList = PreferenceUtils.getPeriods(PrefKeys.periods) as List<Periods>;
-//
-//       if (periodsList.isNotEmpty) {
-//         List<Periods> updatedPeriodsList = periodsList.map((e) => Periods.fromMap(jsonDecode(e as String))).toList();
-//         final int index = updatedPeriodsList.indexWhere((element) => element.id == idPeriod);
-//
-//         if (index >= 0) {
-//           updatedPeriodsList[index].duration = updateValue;
-//           List<String> encodedUpdatedPeriodsList = updatedPeriodsList.map((e) => jsonEncode(e.toMap())).toList();
-//           PreferenceUtils.setPeriods(PrefKeys.periods,encodedUpdatedPeriodsList.cast<Periods>());
-//           emit(UpdatePeriodsSuccessState());
-//         } else {
-//           emit(UpdatePeriodsFailureState('No period found with this id'));
-//         }
-//       } else {
-//         emit(UpdatePeriodsFailureState('No periods found'));
-//       }
-//     } catch (e) {
-//       emit(UpdatePeriodsFailureState(e.toString()));
-//     }
-//   }
-//
-//   void getRooms() async {
-//     try {
-//       List<Rooms> roomsList = await PreferenceUtils.getRooms(PrefKeys.rooms);
-//       rooms.clear();
-//       rooms.addAll(roomsList);
-//       emit(GetRoomsSuccessState());
-//     } catch (error) {
-//       emit(GetRoomsFailureState(error.toString()));
-//     }
-//   }
-//   void deleteRoom(String idRoom) async {
-//     try {
-//       List<Rooms> roomsList = await PreferenceUtils.getRooms(PrefKeys.rooms);
-//       if (roomsList.isNotEmpty) {
-//         List<Rooms> updatedRoomsList = roomsList.map((e) => Rooms.fromMap(jsonDecode(e as String))).toList();
-//         final int index = updatedRoomsList.indexWhere((element) => element.id == idRoom);
-//         if (index >= 0) {
-//           updatedRoomsList.removeAt(index);
-//           List<String> encodedRoomsList = updatedRoomsList.map((e) => jsonEncode(e.toMap())).toList();
-//           PreferenceUtils.setRooms(PrefKeys.rooms, encodedRoomsList.cast<Rooms>());
-//           emit(DeleteRoomsSuccessState());
-//         } else {
-//           emit(DeleteRoomsFailureState('No room found with this id'));
-//         }
-//       } else {
-//         emit(DeleteRoomsFailureState('No rooms found'));
-//       }
-//     } catch (e) {
-//       emit(DeleteRoomsFailureState(e.toString()));
-//     }
-//   }
-//   void addRoom({required Rooms item}) async {
-//     try {
-//       rooms.add(item);
-//       List<String> roomsStrings = rooms.map((e) => json.encode(e.toJson())).toList();
-//       await PreferenceUtils.setRooms(PrefKeys.rooms, roomsStrings.cast<Rooms>());
-//       emit(AddRoomsSuccessState());
-//     } catch (e) {
-//       emit(AddRoomsFailureState(e.toString()));
-//     }
-//   }
-//   void updateRoom(String idRoom, String updateValue) async {
-//     try {
-//       List<Rooms> roomsList = await PreferenceUtils.getRooms(PrefKeys.rooms);
-//
-//       if (roomsList.isNotEmpty) {
-//         List<Rooms> updatedRoomsList =roomsList.map((e) => Rooms.fromMap(jsonDecode(e as String))).toList();
-//         final int index = updatedRoomsList.indexWhere((element) => element.id == idRoom);
-//
-//         if (index >= 0) {
-//           updatedRoomsList[index].name = updateValue;
-//           List<String> encodedUpdatedRoomsList = updatedRoomsList.map((e) => jsonEncode(e.toMap())).toList();
-//           PreferenceUtils.setRooms(PrefKeys.rooms,encodedUpdatedRoomsList.cast<Rooms>());
-//           emit(UpdateRoomsSuccessState());
-//         } else {
-//           emit(UpdateRoomsFailureState('No room found with this id'));
-//         }
-//       } else {
-//         emit(UpdateRoomsFailureState('No rooms found'));
-//       }
-//     } catch (e) {
-//       emit(UpdatePeriodsFailureState(e.toString()));
-//     }
-//   }
 }

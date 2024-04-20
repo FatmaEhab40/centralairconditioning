@@ -36,7 +36,9 @@ class _EditScreenState extends State<EditScreen> {
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
           return current is GetRoomsSuccessState ||
-              current is GetPeriodsSuccessState;
+              current is GetPeriodsSuccessState||
+              current is  UpdatePeriodsSuccessState||
+              current is  UpdateRoomsSuccessState;
         },
         builder: (context, state) {
           return Scaffold(
@@ -137,13 +139,12 @@ class _EditScreenState extends State<EditScreen> {
                             periodController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               periodController.dropDownValue!.name;
-                          //print(selectedValue);
                           dialogPeriodBuilder(context, selectedValue);
-                        } else if (roomController.dropDownValue != null &&
+                        }
+                         if (roomController.dropDownValue != null &&
                             roomController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               roomController.dropDownValue!.name;
-                         // print(selectedValue);
                           dialogRoomBuilder(context, selectedValue);
                         }
                       },
@@ -230,9 +231,7 @@ class _EditScreenState extends State<EditScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         String period = ConstantVar.periodController.text;
-                        //print("3");
                         cubit.updatePeriod(selectedValue, period);
-                        //print("4, period => $period");
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(

@@ -31,7 +31,6 @@ class _TableScreenState extends State<TableScreen> {
       return subjects[i][j][0];
     }
   }
-
   final containerHeight = 40.sp;
   final containerWidth = 50.sp;
   final days = [
@@ -46,6 +45,30 @@ class _TableScreenState extends State<TableScreen> {
   List<List<List<String>>> subjects = [
     [
       ["6006", "6106"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+    ],
+    [
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+      ["empty"],
+    ],
+    [
+      ["empty"],
       ["empty"],
       ["empty"],
       ["empty"],
@@ -146,14 +169,15 @@ class _TableScreenState extends State<TableScreen> {
       create: (context) => cubit,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
-          return current is GetRoomsSuccessState ||
-              current is DeleteRoomsSuccessState ||
-              current is AddRoomsSuccessState ||
-              current is UpdateRoomsSuccessState ||
-              current is GetPeriodsSuccessState ||
-              current is DeletePeriodsSuccessState ||
-              current is AddPeriodsSuccessState ||
-              current is UpdatePeriodsSuccessState;
+          return
+          current is GetPeriodsSuccessState ||
+          current is DeletePeriodsSuccessState ||
+          current is AddPeriodsSuccessState ||
+          current is UpdatePeriodsSuccessState||
+          current is GetRoomsSuccessState ||
+          current is DeleteRoomsSuccessState ||
+          current is AddRoomsSuccessState ||
+          current is UpdateRoomsSuccessState ;
         },
         builder: (context, state) {
           return Scaffold(
@@ -280,7 +304,6 @@ class _TableScreenState extends State<TableScreen> {
                                     ),
                                   ),
                                 ),
-
                                 //periods
                                 Expanded(
                                   child: Container(

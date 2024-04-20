@@ -1,3 +1,4 @@
+import 'package:centralairconditioning/table/page/table_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -12,7 +13,6 @@ class AddScreen extends StatefulWidget {
 }
 
 class _AddScreenState extends State<AddScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +37,7 @@ class _AddScreenState extends State<AddScreen> {
           child: Column(
             children: [
               TextFormField(
-                controller:ConstantVar.periodController,
+                controller: ConstantVar.periodController,
                 decoration: InputDecoration(
                     labelText: "Period",
                     focusedBorder: OutlineInputBorder(
@@ -53,16 +53,29 @@ class _AddScreenState extends State<AddScreen> {
                         color: Colors.brown),
                     suffixIcon: IconButton(
                         onPressed: () {
-                          addPeriod();
-                          ConstantVar.periodController.clear();
+                          if (ConstantVar.periodController.text.isEmpty ||
+                              ConstantVar.periodController.text == "") {
+                            toast("Not allowed");
+                          } else {
+                            cubit.addPeriod();
+                            ConstantVar.periodController.clear();
+                          }
                         },
                         icon: const Icon(Icons.add),
                         color: Colors.brown)),
                 cursorColor: const Color(0xFF3E2723),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Period is required !";
+                  } else if (value == "") {
+                    return "Period is wrong !";
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 20.sp),
               TextFormField(
-                controller:ConstantVar.roomController,
+                controller: ConstantVar.roomController,
                 decoration: InputDecoration(
                     labelText: "Room",
                     focusedBorder: OutlineInputBorder(
@@ -77,22 +90,32 @@ class _AddScreenState extends State<AddScreen> {
                     prefixIcon: const Icon(Icons.room, color: Colors.brown),
                     suffixIcon: IconButton(
                         onPressed: () {
-                          addRoom();
-                          ConstantVar.roomController.clear();
+                          if (ConstantVar.roomController.text.isEmpty ||
+                              ConstantVar.roomController.text == "") {
+                            toast("Not allowed");
+                          } else {
+                            cubit.addRoom();
+                            ConstantVar.roomController.clear();
+                          }
                         },
                         icon: const Icon(Icons.add),
                         color: Colors.brown)),
                 cursorColor: const Color(0xFF3E2723),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Room is required !";
+                  } else if (value == "") {
+                    return "Room is wrong !";
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 5.sp),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    addPeriod();
-                    setState(() {});
-                    Navigator.pop(context);
-
+                      Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.brown,
@@ -113,7 +136,6 @@ class _AddScreenState extends State<AddScreen> {
       ),
     );
   }
-
 
   void addPeriod() async {
     String duration = ConstantVar.periodController.text;
@@ -136,6 +158,4 @@ class _AddScreenState extends State<AddScreen> {
         .set(room.toMap())
         .then((value) {});
   }
-
-
 }
