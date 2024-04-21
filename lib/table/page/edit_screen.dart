@@ -35,10 +35,7 @@ class _EditScreenState extends State<EditScreen> {
       create: (context) => cubit,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
-          return current is GetRoomsSuccessState ||
-              current is GetPeriodsSuccessState||
-              current is  UpdatePeriodsSuccessState||
-              current is  UpdateRoomsSuccessState;
+          return current is Reload;
         },
         builder: (context, state) {
           return Scaffold(

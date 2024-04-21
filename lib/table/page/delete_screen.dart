@@ -35,8 +35,7 @@ class _DeleteScreenState extends State<DeleteScreen> {
       create: (context) => cubit,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
-          return current is GetRoomsSuccessState ||
-              current is GetPeriodsSuccessState;
+          return current is Reload;
         },
         builder: (context, state) {
           return Scaffold(

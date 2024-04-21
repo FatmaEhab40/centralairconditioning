@@ -33,15 +33,8 @@ class _TableScreenState extends State<TableScreen> {
   }
   final containerHeight = 40.sp;
   final containerWidth = 50.sp;
-  final days = [
-    "Saturday",
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday"
-  ];
+
+  //List<List<List<String>>> subjects = cubit.schedulesTable;
   List<List<List<String>>> subjects = [
     [
       ["6006", "6106"],
@@ -161,6 +154,7 @@ class _TableScreenState extends State<TableScreen> {
     super.initState();
     cubit.getPeriods();
     cubit.getRooms();
+    cubit.getSchedule();
   }
 
   @override
@@ -169,15 +163,7 @@ class _TableScreenState extends State<TableScreen> {
       create: (context) => cubit,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
-          return
-          current is GetPeriodsSuccessState ||
-          current is DeletePeriodsSuccessState ||
-          current is AddPeriodsSuccessState ||
-          current is UpdatePeriodsSuccessState||
-          current is GetRoomsSuccessState ||
-          current is DeleteRoomsSuccessState ||
-          current is AddRoomsSuccessState ||
-          current is UpdateRoomsSuccessState ;
+          return current is Reload ;
         },
         builder: (context, state) {
           return Scaffold(
@@ -261,7 +247,7 @@ class _TableScreenState extends State<TableScreen> {
             body: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
-                  height: (containerHeight*(days.length+1))+(10.sp+(8.sp*(days.length+2))),
+                  height: (containerHeight*(cubit.days.length+1))+(10.sp+(8.sp*(cubit.days.length+2))),
                   width: (containerWidth*(cubit.periods.length+1))+(10.sp+(8.sp*(cubit.periods.length+2))),
                   padding: EdgeInsets.all(10.sp),
                   child: PageView(
@@ -345,7 +331,7 @@ class _TableScreenState extends State<TableScreen> {
                               height: 500.sp,
                               child: ListView.builder(
                                 scrollDirection: Axis.vertical,
-                                itemCount: days.length,
+                                itemCount: cubit.days.length,
                                 itemBuilder: (context, index1) => SizedBox(
                                   height: containerHeight,
                                   width: containerWidth,
@@ -363,7 +349,7 @@ class _TableScreenState extends State<TableScreen> {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            days[index1],
+                                            cubit.days[index1],
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                                 color: Colors.white,
@@ -392,16 +378,23 @@ class _TableScreenState extends State<TableScreen> {
                                                         EdgeInsets.symmetric(
                                                             horizontal: 4.sp),
                                                     child:DropdownButton<String>(
-                                                      value: dropDownValue=subjects[index1][index2][0],
+                                                      value:
+                                                      //cubit.schedulesTable[index1][index2][0],
+                                                      dropDownValue=subjects[index1][index2][0],
                                                       onChanged: (String? newValue){
                                                         setState(() {
                                                           dropDownValue = newValue!;
                                                         });
                                                       },
-                                                      items: List.generate(subjects[index1][index2].length, (int index) {
+                                                      items: List.generate(subjects[index1][index2].length,
+                                                         // cubit.schedulesTable[index1][index2].length,
+                                                              (int index) {
                                                         return DropdownMenuItem(
                                                           value: subjects[index1][index2][index],
-                                                          child: Text(subjects[index1][index2][index]),
+                                                          //cubit.schedulesTable[index1][index2][index],
+                                                          child: Text(subjects[index1][index2][index]
+                                                              //cubit.schedulesTable[index1][index2][index]
+                                                          ),
                                                         );
                                                       })..add(DropdownMenuItem(
                                                         value: "add",
@@ -415,7 +408,6 @@ class _TableScreenState extends State<TableScreen> {
                                                                   backgroundColor: ConstantVar.backgroundPage,
                                                                   shape: const RoundedRectangleBorder(
                                                                       borderRadius: BorderRadius.all(Radius.circular(30))),
-                                                                  // title: const Text("Select Rooms"),
                                                                   content: DropDownMultiSelect<String>(
                                                                     selectedValues: selectedRooms,
                                                                     selected_values_style:
@@ -467,7 +459,7 @@ class _TableScreenState extends State<TableScreen> {
                                                                               for(int i = 0 ; i < selectedRooms.length ; i++){
                                                                                 for(int j = 0 ; j < subjects[index1][index2].length ; j++){
                                                                                   if(subjects[index1][index2][j]==selectedRooms[i]){
-                                                                                    subjects[index1][index2].removeAt(j);
+                                                                                  subjects[index1][index2].removeAt(j);
                                                                                   }
                                                                                 }
                                                                               }

@@ -1,48 +1,9 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-
-class MyFirebaseOptions {
-  final String apiKey;
-  final String appId;
-  final String messagingSenderId;
-  final String projectId;
-
-
-  MyFirebaseOptions({
-    required this.apiKey,
-    required this.appId,
-    required this.messagingSenderId,
-    required this.projectId,
-  });
-
-  static FirebaseOptions platform = const FirebaseOptions(
-      apiKey: "AIzaSyAPEAZlciZ-z0ERSN_WJ9xr78d4Tvum-qA",
-      authDomain: "central-air-conditioning-35edc.firebaseapp.com",
-      projectId: "central-air-conditioning-35edc",
-      storageBucket: "central-air-conditioning-35edc.appspot.com",
-      messagingSenderId: "737892810655",
-      appId: "1:737892810655:web:822820f2a53efb9fee47aa",
-      measurementId: "G-LY6BYVJ57M"
-  );
-
-  static FirebaseOptions get currentPlatform {
-    if (Platform.isAndroid) {
-      return platform;
-    }else if (Platform.isWindows) {
-      return platform;
-    } else if (Platform.isIOS) {
-      return platform;
-    } else {
-      throw UnsupportedError('DefaultFirebaseOptions are not supported for this platform.');
-    }
-  }
-}
 
 class ConstantVar{
   static  bool isObscure = true;
@@ -80,20 +41,6 @@ void toast(message) {
   );
 }
 
-
-class Scadule {
-  List<String> rooms = [];
-  String id = "";
-
-  Scadule(this.rooms, this.id);
-
-  Map<String, dynamic> toMap() {
-
-    return {
-    };
-  }
-}
-
 class Periods {
   String duration = "";
   String id = "";
@@ -125,13 +72,15 @@ class Periods {
 
 class Rooms {
   String name = "";
+  int noOfpeople=0;
   String id = "";
   String userId = ConstantVar.auth.currentUser!.uid;
-  Rooms(this.name, this.id);
+  Rooms(this.name, this.id,this.noOfpeople);
 
   Map<String, dynamic> toMap() {
     return {
       "name": name,
+      "noOfpeople" : noOfpeople,
       "id": id,
       "userId": userId,
     };
@@ -139,6 +88,7 @@ class Rooms {
 
   Rooms.fromMap(Map<dynamic, dynamic> data) {
     name = data['name'];
+    noOfpeople = data['noOfpeople']??0;
     id = data['id'];
     userId = data['userId'];
   }
@@ -146,8 +96,38 @@ class Rooms {
   Map<String, dynamic> toJson() {
     return {
       "name": name,
+     "noOfpeople" : noOfpeople,
       "id": id,
       "userId": userId,
+    };
+  }
+}
+
+class Schedule {
+  List<String> rooms = [];
+  int index1 = 0;
+  int index2 = 0;
+  Schedule(this.rooms, this.index1, this.index2);
+
+  Map<String, dynamic> toMap() {
+    return {
+      "rooms": rooms,
+      "index1": index1,
+      "index2": index2,
+    };
+  }
+
+  Schedule.fromMap(Map<dynamic, dynamic> data) {
+    rooms = data['rooms'];
+    index1 = data['index1'];
+    index2 = data['index2'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "rooms": rooms,
+      "index1": index1,
+      "index2": index2,
     };
   }
 }

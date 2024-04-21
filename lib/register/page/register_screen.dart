@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -246,7 +247,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (state is RegisterSuccessState) {
       onRegisterSuccess();
     } else if (state is RegisterFailureState) {
-      toast(state.errorMessage);
+      if (kDebugMode) {
+        print(state.errorMessage);
+      }
     }
   }
 

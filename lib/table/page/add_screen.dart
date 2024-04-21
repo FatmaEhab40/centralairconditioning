@@ -111,51 +111,29 @@ class _AddScreenState extends State<AddScreen> {
                 },
               ),
               SizedBox(height: 5.sp),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                      Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown,
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 5.0.sp, vertical: 5.0.sp),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0.sp)),
-                  ),
-                  child: Text(
-                    "Save",
-                    style: TextStyle(color: Colors.white, fontSize: 15.sp),
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   width: double.infinity,
+              //   child: ElevatedButton(
+              //     onPressed: () {
+              //         Navigator.pop(context);
+              //     },
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.brown,
+              //       padding: EdgeInsets.symmetric(
+              //           horizontal: 5.0.sp, vertical: 5.0.sp),
+              //       shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(10.0.sp)),
+              //     ),
+              //     child: Text(
+              //       "Save",
+              //       style: TextStyle(color: Colors.white, fontSize: 15.sp),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  void addPeriod() async {
-    String duration = ConstantVar.periodController.text;
-    String id = DateTime.now().microsecondsSinceEpoch.toString();
-    final period = Periods(duration, id);
-    await ConstantVar.firestore
-        .collection("periods")
-        .doc(id)
-        .set(period.toMap())
-        .then((value) {});
-  }
-
-  void addRoom() async {
-    String name = ConstantVar.roomController.text;
-    String id = DateTime.now().microsecondsSinceEpoch.toString();
-    final room = Rooms(name, id);
-    await ConstantVar.firestore
-        .collection("rooms")
-        .doc(id)
-        .set(room.toMap())
-        .then((value) {});
   }
 }

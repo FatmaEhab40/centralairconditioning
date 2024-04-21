@@ -9,7 +9,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:app_settings/app_settings.dart';
-import 'login/page/login_screen.dart';
+import 'home/page/home_screen.dart';
 
 
 
@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
           theme: ThemeData(
             useMaterial3: false,
           ),
-          home: const LoginScreen(),
+          home: const HomeScreen(),
           // SafeArea(
           //   child: FutureBuilder<bool>(
           //     future: checkInternetConnection(),

@@ -8,20 +8,18 @@ import '../manager/profile_cubit.dart';
 import '../manager/profile_state.dart';
 
 class User {
-  String image = "";
   String name = "";
   String phone = "";
   String email = "";
   String id = "";
   String userId = "";
 
-  User(this.image, this.name, this.phone, this.email, this.id) {
+  User( this.name, this.phone, this.email, this.id) {
     userId = ConstantVar.auth.currentUser!.uid;
   }
 
   Map<String, dynamic> toMap() {
     return {
-      "Image": image,
       "Name": name,
       "Phone": phone,
       "Email": email,
@@ -31,7 +29,6 @@ class User {
   }
 
   User.fromMap(Map<dynamic, dynamic> data) {
-    data['Image'];
     data['Name'];
     data['Phone'];
     data['Email'];

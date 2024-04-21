@@ -12,7 +12,8 @@ import '../../table/page/table_screen.dart';
 import '../manager/home_cubit.dart';
 import '../manager/home_state.dart';
 
-final cubit =HomeCubit();
+final cubit = HomeCubit();
+const Color color = Colors.green;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,12 +23,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   void initState() {
     super.initState();
     cubit.getRooms();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,67 +38,70 @@ class _HomeScreenState extends State<HomeScreen> {
         iconTheme: const IconThemeData(
           color: ConstantVar.backgroundPage,
         ),
-        title:GradientText(
+        title: GradientText(
           'Home',
           style: GoogleFonts.eagleLake(fontSize: 20.sp),
           gradientType: GradientType.linear,
-          colors: ConstantVar.gradientList,),
+          colors: ConstantVar.gradientList,
+        ),
         actions: [
           TextButton(
-            onPressed: (){ Navigator.push(
-                context, MaterialPageRoute(
-              builder: (context) => const TableScreen(),));
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TableScreen(),
+                  ));
             },
             style: ElevatedButton.styleFrom(
-                padding:  EdgeInsets.symmetric(
-                    horizontal: 5.0.sp, vertical: 5.0.sp),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 5.0.sp, vertical: 5.0.sp),
                 backgroundColor: ConstantVar.backgroundPage,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0.sp)
-                )
-            ),
-            child: GradientText(
-                'Table',
+                    borderRadius: BorderRadius.circular(10.0.sp))),
+            child: GradientText('Table',
                 style: GoogleFonts.eagleLake(fontSize: 17.sp),
-                colors: ConstantVar.gradientList
-            ),
+                colors: ConstantVar.gradientList),
           ),
           SizedBox(width: 20.sp),
           ShaderMask(
             shaderCallback: (Rect bounds) {
-              return  LinearGradient(
+              return LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: ConstantVar.gradientList,
               ).createShader(bounds);
             },
-            child:  IconButton(
+            child: IconButton(
               iconSize: 20.sp,
               onPressed: () {
-                Navigator.push(context,
+                Navigator.push(
+                    context,
                     MaterialPageRoute(
-                        builder: (context) => const ProfileScreen()));},
-              icon:  const Icon(Icons.person),
+                        builder: (context) => const ProfileScreen()));
+              },
+              icon: const Icon(Icons.person),
             ),
           ),
           SizedBox(width: 20.sp),
           ShaderMask(
             shaderCallback: (Rect bounds) {
-              return  LinearGradient(
+              return LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: ConstantVar.gradientList,
               ).createShader(bounds);
             },
-            child:  IconButton(
+            child: IconButton(
               iconSize: 20.sp,
               onPressed: () {
                 FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(
-                    context, MaterialPageRoute(
-                    builder: (context) => const LoginScreen()));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()));
               },
-              icon:  const Icon(Icons.logout),
+              icon: const Icon(Icons.logout),
             ),
           ),
         ],
@@ -106,18 +110,32 @@ class _HomeScreenState extends State<HomeScreen> {
         create: (context) => cubit,
         child: BlocBuilder<HomeCubit, HomeState>(
           buildWhen: (previous, current) {
-            return current is GetRoomsSuccessState ||
-                current is DeleteRoomsSuccessState ||
-                current is AddRoomsSuccessState ||
-                current is UpdateRoomsSuccessState ;
+            return current is Reload;
           },
           builder: (context, state) {
-            return ListView.builder(
-              itemCount:cubit.rooms.length ,
-              itemBuilder: (context, index) {
-                return listRooms(index);
-              },
-            );
+            return
+              //SingleChildScrollView(
+              //
+              // child: SizedBox(
+              //   width: 1000.sp,
+              //   child: Column(
+              //     children: [
+              //       listRooms(0),
+              //       Flexible(
+              //         fit: FlexFit.tight,
+                      //child:
+                ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: cubit.rooms.length ,
+                        itemBuilder: (context, index) {
+                          return listRooms(index );
+                        },
+                      );
+              //       ),
+              //     ],
+              //   ),
+              // ),
+            //);
           },
         ),
       ),
@@ -125,43 +143,37 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget listRooms(int index) {
-    const Color color=Colors.green;
-
-    return Stack(alignment: Alignment.center,
+    return Stack(
+      alignment: Alignment.center,
       children: [
         Container(
-          margin:  EdgeInsets.all(15.sp),
-          padding:  EdgeInsets.all(15.sp),
-          height: 45.sp,
-          width: 50.sp,
-          decoration: const BoxDecoration(
-            color: color,
-          ),
+          margin: EdgeInsets.all(15.sp),
+          height: 55.sp,
+          width:  58.sp,
+          color: color,
         ),
         Column(
           children: [
-            Text(cubit.rooms[index].name,
-              style:  TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white
-              ),
+            Text(
+              cubit.rooms[index].name,
+              style:  TextStyle(fontSize: 17.sp,
+                  fontWeight: FontWeight.w500, color: Colors.white),
             ),
             SizedBox(height: 10.sp),
             CachedNetworkImage(
               imageUrl:
               "https://www.sisaairconditioning.com.au/wp-content/uploads/2021/12/Ducted-Air-Conditioning-Adelaide.png",
-              width: 45.sp,),
+              width: 51.sp,
+            ),
+            SizedBox(height: 10.sp),
+            Text(
+              "Number of People: ${cubit.rooms[index].noOfpeople}",
+              style:
+               TextStyle(fontSize: 17.sp,fontWeight: FontWeight.w500, color: Colors.white),
+            ),
           ],
         ),
-
       ],
     );
   }
 }
-
-
-
-
-
-
