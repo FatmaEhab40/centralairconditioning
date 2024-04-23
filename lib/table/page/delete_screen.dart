@@ -9,12 +9,12 @@ import '../../table/page/table_screen.dart';
 import '../manager/table_cubit.dart';
 import '../manager/table_state.dart';
 
-List<DropDownValueModel> dropDownListPeriods = cubit.periods
+List<DropDownValueModel> dropDownListPeriods = cubitTable.periods
     .map(
         (period) => DropDownValueModel(name: period.duration, value: period.id))
     .toList();
 
-List<DropDownValueModel> dropDownListRooms = cubit.rooms
+List<DropDownValueModel> dropDownListRooms = cubitTable.rooms
     .map((room) => DropDownValueModel(name: room.name, value: room.id))
     .toList();
 
@@ -32,7 +32,7 @@ class _DeleteScreenState extends State<DeleteScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => cubitTable,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
           return current is Reload;
@@ -88,7 +88,7 @@ class _DeleteScreenState extends State<DeleteScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubit.periods.length,
+                    dropDownItemCount: cubitTable.periods.length,
                     dropDownList: dropDownListPeriods,
                     onChanged: (value) {},
                   ),
@@ -123,7 +123,7 @@ class _DeleteScreenState extends State<DeleteScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubit.rooms.length,
+                    dropDownItemCount: cubitTable.rooms.length,
                     dropDownList: dropDownListRooms,
                     onChanged: (value) {},
                   ),
@@ -137,14 +137,14 @@ class _DeleteScreenState extends State<DeleteScreen> {
                           String selectedValue =
                               periodController.dropDownValue!.name;
                           //print(selectedValue);
-                          cubit.deletePeriod(selectedValue);
+                          cubitTable.deletePeriod(selectedValue);
                         }
                         else if (roomController.dropDownValue != null &&
                             roomController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               roomController.dropDownValue!.name;
                           //print(selectedValue);
-                          cubit.deleteRoom(selectedValue);
+                          cubitTable.deleteRoom(selectedValue);
                         }
                         Navigator.pop(context);
                       },

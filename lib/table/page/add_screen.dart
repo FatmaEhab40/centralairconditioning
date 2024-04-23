@@ -57,7 +57,7 @@ class _AddScreenState extends State<AddScreen> {
                               ConstantVar.periodController.text == "") {
                             toast("Not allowed");
                           } else {
-                            cubit.addPeriod();
+                            cubitTable.addPeriod();
                             ConstantVar.periodController.clear();
                           }
                         },
@@ -94,7 +94,7 @@ class _AddScreenState extends State<AddScreen> {
                               ConstantVar.roomController.text == "") {
                             toast("Not allowed");
                           } else {
-                            cubit.addRoom();
+                            cubitTable.addRoom();
                             ConstantVar.roomController.clear();
                           }
                         },

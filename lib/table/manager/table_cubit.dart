@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:centralairconditioning/table/manager/table_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,8 +19,8 @@ class TableCubit extends Cubit<TableState> {
   ];
   List<Periods> periods = [];
   List<Rooms> rooms = [];
-  List<Schedule> schedules =[];
-  List<List<List<String>>> schedulesTable = [];
+  //List<Schedule> schedules =[];
+ // List<List<List<String>>> schedulesTable = [];
   void getPeriods() {
     ConstantVar.firestore.collection("periods")
         .get()
@@ -29,9 +30,13 @@ class TableCubit extends Cubit<TableState> {
         final period=Periods.fromMap(document.data());
         periods.add(period);
       }
-      emit(Reload());
+      emit(GetPeriodsSuccessState());
+      //emit(Reload());
     }).catchError((error)
-    {emit(ReloadFailure(error.toString()));});
+    {
+      emit(GetPeriodsFailureState(error.toString()));
+      //emit(ReloadFailure(error.toString()));
+    });
   }
 
   void deletePeriod(String duration)async{
@@ -45,12 +50,15 @@ class TableCubit extends Cubit<TableState> {
             .doc(documentId)
             .delete();
         periods.removeWhere((element) => element.id== duration);
-        emit(Reload());
+        emit(DeletePeriodsSuccessState());
+        //emit(Reload());
       }else {
-        emit(ReloadFailure('No period found with this id'));
+        emit(DeletePeriodsFailureState('No period found with this id'));
+        //emit(ReloadFailure('No period found with this id'));
       }
     }catch (e) {
-      emit(ReloadFailure(e.toString()));
+      emit(DeletePeriodsFailureState(e.toString()));
+     // emit(ReloadFailure(e.toString()));
     }
   }
 
@@ -64,9 +72,11 @@ class TableCubit extends Cubit<TableState> {
         .set(period.toMap())
         .then((value) {
       periods.add(period);
-      emit(Reload());
+      emit(AddPeriodsSuccessState());
+      //emit(Reload());
     }).catchError((error){
-      emit(ReloadFailure("error"));
+      emit(AddPeriodsFailureState("Error when add"));
+     // emit(ReloadFailure("error"));
     });
 
   }
@@ -82,14 +92,17 @@ class TableCubit extends Cubit<TableState> {
             .doc(documentId).update({
           'duration': updateValue,
         }).then((value) {
-          emit(Reload());
+          emit(UpdatePeriodsSuccessState());
+          //emit(Reload());
         });
       }
       else {
-        emit(ReloadFailure('No period found with this id'));
+        emit(UpdatePeriodsFailureState('No period found with this id'));
+        //emit(ReloadFailure('No period found with this id'));
       }
     } catch (e) {
-      emit(ReloadFailure(e.toString()));
+      emit(UpdatePeriodsFailureState(e.toString()));
+      //emit(ReloadFailure(e.toString()));
     }
   }
 
@@ -102,9 +115,16 @@ class TableCubit extends Cubit<TableState> {
         final room=Rooms.fromMap(document.data());
         rooms.add(room);
       }
-      emit(Reload());
-    }).catchError((error)
-    {emit(ReloadFailure(error.toString()));});
+      //emit(Reload());
+      emit(GetRoomsSuccessState());
+    })
+        .catchError((error)
+    {if (kDebugMode) {
+      print("Error Failure: ${error.toString()}");
+    }
+    emit(GetRoomsFailureState(error.toString()));
+      // emit(ReloadFailure(error.toString()));
+    });
   }
 
   void deleteRoom(String name)async{
@@ -118,12 +138,15 @@ class TableCubit extends Cubit<TableState> {
             .doc(documentId)
             .delete();
         rooms.removeWhere((element) => element.id== name);
-        emit(Reload());
+        //emit(Reload());
+        emit(DeleteRoomsSuccessState());
       }else {
-        emit(ReloadFailure('No room found with this id'));
+        //emit(ReloadFailure('No room found with this id'));
+        emit(DeleteRoomsFailureState('No room found with this id'));
       }
     }catch (e) {
-      emit(ReloadFailure(e.toString()));
+      emit(DeleteRoomsFailureState(e.toString()));
+      //emit(ReloadFailure(e.toString()));
     }
   }
 
@@ -132,16 +155,17 @@ class TableCubit extends Cubit<TableState> {
     String id = DateTime.now().microsecondsSinceEpoch.toString();
     int noOfpeople =0;
     final room = Rooms(name, id,noOfpeople);
-        //noOfpeople );
     await ConstantVar.firestore
         .collection("rooms")
         .doc(id)
         .set(room.toMap())
         .then((value) {
       rooms.add(room);
-      emit(Reload());
+      emit(AddRoomsSuccessState());
+      //emit(Reload());
     }).catchError((error){
-      emit(ReloadFailure("error"));
+      emit(AddRoomsFailureState("Error when add"));
+      //emit(ReloadFailure("error"));
     });
 
   }
@@ -159,146 +183,108 @@ class TableCubit extends Cubit<TableState> {
             .doc(documentId).update({
           'name': room,
         }).then((value) {
-          emit(Reload());
+          emit(UpdateRoomsSuccessState());
+          //emit(Reload());
         });
       } else {
-        emit(ReloadFailure('No room found with this id'));
+        emit(UpdateRoomsFailureState('No room found with this id'));
+        // emit(ReloadFailure('No room found with this id'));
       }
     } catch (e) {
-      emit(ReloadFailure(e.toString()));
+      emit(UpdateRoomsFailureState(e.toString()));
+      // emit(ReloadFailure(e.toString()));
     }
   }
 
+  Future<void> addSchedule(List<List<String>> table) async {
+    for (int i = 0; i < table.length; i++) {
+      List<String> rooms = table[i];
+      String id = i.toString();
+      await ConstantVar.firestore
+          .collection("schedule")
+          .doc(id)
+          .set(Schedule(rooms, i, 0).toMap())
+          .then((value) {
+            emit(Reload());
+      })
+          .catchError((error) {
+        emit(ReloadFailure('There is no table'));
+      });
+    }
 
-  void getSchedule() {
-    int x = 0;
-    ConstantVar.firestore.collection("schedule")
-        .get()
-        .then((value) {
-      schedules.clear();
-      schedulesTable.clear();
-      for(int i = 0 ; i < days.length ; i++){
-        for(int j = 0 ; j < periods.length ; j++){
-          if(value.docs.isNotEmpty &&
-              value.docs.length == days.length*periods.length &&
-              value.docs.isNotEmpty &&
-              value.docs.length != (days.length*periods.length)){
-            schedulesTable[i][j]=schedules[x].rooms  ;
-            x++;
-          }
-          else if (value.docs.isNotEmpty && value.docs.length != (days.length*periods.length)){
-            if (schedules[x].index1 == i && schedules[x].index2 == j){
-              schedulesTable[i][j]=schedules[x].rooms;
-              x++;
-            }
-            else{
-              schedulesTable[i][j][0]= "empty";
-              x++;
-
-            }
-          }
-          else
-            if(value.docs.isEmpty){
-            schedulesTable[i][j][0]= "empty";
-          }
-        }
-      }
-      // for(int e=0;e<schedulesTable.length;e++){
-      //   for(int a=0;a<schedulesTable.length;a++){
-      //     List<List<List<String>>> sc=[];
-      //     print("sc= ${sc[e][a]}");
-      //   }
-      //}
-      emit(Reload());
-      // if (value.docs.isNotEmpty) {
-      //   for (var document in value.docs) {
-      //     final schedules = Schedule.fromMap(document.data());
-      //     schedules.add(schedule);
-      //   }
-      //   for(int i = 0 ; i < 7 ; i++){
-      //     for(int j = 0 ; j < periods.length ; j++){
-      //       schedulesTable[i][j]=schedules[x].rooms  ;
-      //       x++;
-      //     }
-      //   }
-      //   emit(GetScheduleSuccessState());
-      // }
-      // else if (value.docs.isEmpty){
-      //   for(int i = 0 ; i < 7 ; i++){
-      //     for(int j = 0 ; j < periods.length ; j++){
-      //       schedulesTable[i][j][0]= "empty";
-      //       x++;
-      //     }
-      //   }
-      //   emit(GetScheduleSuccessState());
-      // }
-      // else if (value.docs.length != (7*periods.length)){
-      //   for(int i = 0 ; i < 7 ; i++){
-      //     for(int j = 0 ; j < periods.length ; j++){
-      //       if (schedules[x].index1 == i && schedules[x].index2 == j){
-      //         schedules[i][j]=schedules[x].rooms;
-      //       }
-      //       else{
-      //         schedulesTable[i][j][0]= "empty";
-      //       }
-      //       x++;
-      //     }
-      //   }
-      //   emit(GetScheduleSuccessState());
-      // }
-    }).catchError((error) {
-      if (kDebugMode) {
-        print("Error: ${error.toString()}");
-      }
-      emit(ReloadFailure(error.toString()));});
   }
-  Future<void> updateSchedule({required List<List<List<String>>> table}) async {
-    List<String> rooms = [];
-    String id = "";
-    int index1 = 0;
-    int index2 = 0;
-    var period = Schedule(rooms, index1, index2);
-    for(int i = 0 ; i < 7 ; i++){
-      for(int j = 0 ; j < periods.length ; j++){
-        rooms=table[i][j];
-        id = "$i""$j";
-        index1 = i;
-        index2 = j;
+
+  // Future<List<List<List<String>>>> getSchedule(List<List<List<String>>> schedulesTable) async {
+  //   schedulesTable = List.generate(
+  //     7, (i) => List.generate(periods.length, (j) => [],),);
+  //   QuerySnapshot snapshot = await ConstantVar.firestore
+  //       .collection("schedule")
+  //       .get();
+  //     for (var doc in snapshot.docs) {
+  //       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+  //       int index1 = data['index1'];
+  //       int index2 = data['index2'];
+  //       List<String> rooms = List<String>.from(data['rooms']);
+  //       schedulesTable[index1][index2] = rooms;
+  //       print("Rooms = ${rooms.length}");
+  //       print("Schedules = ${schedulesTable.length}");
+  //     }
+  //     emit(Reload());
+  //     return schedulesTable;
+  //
+  // }
+  Future<List<List<List<String>>>> getSchedule(List<List<List<String>>> schedulesTable) async {
+  schedulesTable = List.generate(
+      7, (i) => List.generate(periods.length, (j) => [],),);
+    try {
+      QuerySnapshot snapshot = await ConstantVar.firestore
+          .collection("schedule")
+          .get();
+      for (var doc in snapshot.docs) {
+        print("2");
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        print("data= $data");
+        int index1 = data['index1'];
+        print("index1= $index1");
+        int index2 = data['index2'];
+        print("index2= $index2");
+        List<String> rooms = List<String>.from(data['rooms']);
+        print("rooms= ${rooms[1]}");
+        for(int i=0;i<rooms.length;i++){
+          schedulesTable[index1][index2].add(rooms[i]);
+        }
+
+        print("Schedules = ${schedulesTable.length}");
+      }
+      emit(Reload());
+      return schedulesTable;
+    } catch (e) {
+      print("Error when get schedule: $e");
+      emit(ReloadFailure(e.toString()));
+      return [];
+    }
+  }
+
+  Future<void> updateSchedule(List<List<List<String>>> table) async {
+    for (int i = 0; i < 7; i++) {
+      for (int j = 0; j < periods.length; j++) {
+        List<String> rooms = table[i][j];
+        String id = "$i$j";
         await ConstantVar.firestore
             .collection("schedule")
             .doc(id)
-            .set(period.toMap())
-            .then((value) {});
+            .update({'rooms': rooms, 'index1': i, 'index2': j})
+            .then((_) {
+          emit(Reload());
+        }).catchError((error) {
+          emit(ReloadFailure('There is no table'));
+        });
       }
     }
-    emit(Reload());
+
   }
 
 
-
-
-// void updateSchedule(String idPeriod, String updateValue) async {
-//   String period = updateValue;
-//   try {
-//     final QuerySnapshot<Map<String, dynamic>> querySnapshot =
-//     await ConstantVar.firestore.collection("periods")
-//         .where('id', isEqualTo: idPeriod).get();
-//
-//     if (querySnapshot.docs.isNotEmpty) {
-//       final String documentId = querySnapshot.docs.first.id;
-//       await ConstantVar.firestore.collection("periods")
-//           .doc(documentId).update({
-//         'duration': period,
-//       }).then((value) {
-//         emit(UpdatePeriodsSuccessState());
-//       });
-//     } else {
-//       emit(UpdatePeriodsFailureState('No period found with this id'));
-//     }
-//   } catch (e) {
-//     emit(UpdatePeriodsFailureState(e.toString()));
-//   }
-// }
 
 
 }

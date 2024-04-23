@@ -9,12 +9,12 @@ import '../../models.dart';
 import '../manager/table_cubit.dart';
 import '../manager/table_state.dart';
 
-List<DropDownValueModel> dropDownListPeriods = cubit.periods
+List<DropDownValueModel> dropDownListPeriods = cubitTable.periods
     .map(
         (period) => DropDownValueModel(name: period.duration, value: period.id))
     .toList();
 
-List<DropDownValueModel> dropDownListRooms = cubit.rooms
+List<DropDownValueModel> dropDownListRooms = cubitTable.rooms
     .map((room) => DropDownValueModel(name: room.name, value: room.id))
     .toList();
 
@@ -32,7 +32,7 @@ class _EditScreenState extends State<EditScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => cubitTable,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
           return current is Reload;
@@ -88,7 +88,7 @@ class _EditScreenState extends State<EditScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubit.periods.length,
+                    dropDownItemCount: cubitTable.periods.length,
                     dropDownList: dropDownListPeriods,
                     onChanged: (value) {},
                   ),
@@ -123,7 +123,7 @@ class _EditScreenState extends State<EditScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubit.rooms.length,
+                    dropDownItemCount: cubitTable.rooms.length,
                     dropDownList: dropDownListRooms,
                     onChanged: (value) {},
                   ),
@@ -228,7 +228,7 @@ class _EditScreenState extends State<EditScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         String period = ConstantVar.periodController.text;
-                        cubit.updatePeriod(selectedValue, period);
+                        cubitTable.updatePeriod(selectedValue, period);
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
@@ -313,7 +313,7 @@ class _EditScreenState extends State<EditScreen> {
                       onPressed: () {
                         String room = ConstantVar.roomController.text;
                         //print("3");
-                        cubit.updateRoom(selectedValue, room);
+                        cubitTable.updateRoom(selectedValue, room);
                         //print("4, room => $room");
                         Navigator.pop(context);
                       },

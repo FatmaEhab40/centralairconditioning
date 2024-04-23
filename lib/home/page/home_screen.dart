@@ -110,32 +110,20 @@ class _HomeScreenState extends State<HomeScreen> {
         create: (context) => cubit,
         child: BlocBuilder<HomeCubit, HomeState>(
           buildWhen: (previous, current) {
-            return current is Reload;
+            return current is Reload||
+             current is GetRoomsSuccessState||
+             current is AddRoomsSuccessState||
+             current is DeleteRoomsSuccessState||
+             current is UpdateRoomsSuccessState;
           },
           builder: (context, state) {
-            return
-              //SingleChildScrollView(
-              //
-              // child: SizedBox(
-              //   width: 1000.sp,
-              //   child: Column(
-              //     children: [
-              //       listRooms(0),
-              //       Flexible(
-              //         fit: FlexFit.tight,
-                      //child:
-                ListView.builder(
+            return ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: cubit.rooms.length ,
                         itemBuilder: (context, index) {
                           return listRooms(index );
                         },
                       );
-              //       ),
-              //     ],
-              //   ),
-              // ),
-            //);
           },
         ),
       ),

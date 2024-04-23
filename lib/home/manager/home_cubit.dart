@@ -20,19 +20,15 @@ class HomeCubit extends Cubit<HomeState> {
         final room=Rooms.fromMap(document.data());
         rooms.add(room);
       }
-      if (kDebugMode) {
-        print("done");
-      }
-      if (kDebugMode) {
-        print("rooms=${rooms.length}");
-      }
-      emit(Reload());
+      //emit(Reload());
+      emit(GetRoomsSuccessState());
     })
         .catchError((error)
     {if (kDebugMode) {
       print("Error Failure: ${error.toString()}");
     }
-      emit(ReloadFailure(error.toString()));
+    emit(GetRoomsFailureState(error.toString()));
+     // emit(ReloadFailure(error.toString()));
     });
   }
 
@@ -47,12 +43,15 @@ class HomeCubit extends Cubit<HomeState> {
             .doc(documentId)
             .delete();
         rooms.removeWhere((element) => element.id== name);
-        emit(Reload());
+        //emit(Reload());
+        emit(DeleteRoomsSuccessState());
       }else {
-        emit(ReloadFailure('No room found with this id'));
+        //emit(ReloadFailure('No room found with this id'));
+        emit(DeleteRoomsFailureState('No room found with this id'));
       }
     }catch (e) {
-      emit(ReloadFailure(e.toString()));
+      emit(DeleteRoomsFailureState(e.toString()));
+      //emit(ReloadFailure(e.toString()));
     }
   }
 
@@ -61,17 +60,17 @@ class HomeCubit extends Cubit<HomeState> {
     String id = DateTime.now().microsecondsSinceEpoch.toString();
     int noOfpeople =0;
     final room = Rooms(name, id,noOfpeople);
-        //,noOfpeople);
     await ConstantVar.firestore
         .collection("rooms")
         .doc(id)
         .set(room.toMap())
         .then((value) {
       rooms.add(room);
-
-      emit(Reload());
+      emit(AddRoomsSuccessState());
+      //emit(Reload());
     }).catchError((error){
-      emit(ReloadFailure("error"));
+      emit(AddRoomsFailureState("Error when add"));
+      //emit(ReloadFailure("error"));
     });
 
   }
@@ -89,13 +88,16 @@ class HomeCubit extends Cubit<HomeState> {
             .doc(documentId).update({
           'name': room,
         }).then((value) {
-          emit(Reload());
+          emit(UpdateRoomsSuccessState());
+          //emit(Reload());
         });
       } else {
-        emit(ReloadFailure('No room found with this id'));
+        emit(UpdateRoomsFailureState('No room found with this id'));
+       // emit(ReloadFailure('No room found with this id'));
       }
     } catch (e) {
-      emit(ReloadFailure(e.toString()));
+      emit(UpdateRoomsFailureState(e.toString()));
+     // emit(ReloadFailure(e.toString()));
     }
   }
 

@@ -1,5 +1,4 @@
 // ignore_for_file: unrelated_type_equality_checks
-import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,8 +12,8 @@ import 'add_screen.dart';
 import 'delete_screen.dart';
 import 'edit_screen.dart';
 
-final cubit = TableCubit();
-
+final cubitTable = TableCubit();
+List<List<List<String>>> subjects = [];
 class TableScreen extends StatefulWidget {
   const TableScreen({super.key});
 
@@ -23,147 +22,146 @@ class TableScreen extends StatefulWidget {
 }
 
 class _TableScreenState extends State<TableScreen> {
-  String dropDownValue = 'example value';
-  String checker(int i, int j) {
-    if (subjects[i][j][0] == const GrpcError.outOfRange()) {
-      return "empty";
-    } else {
-      return subjects[i][j][0];
-    }
-  }
   final containerHeight = 40.sp;
   final containerWidth = 50.sp;
 
-  //List<List<List<String>>> subjects = cubit.schedulesTable;
-  List<List<List<String>>> subjects = [
-    [
-      ["6006", "6106"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-    ],
-    [
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-    ],
-    [
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-    ],
-    [
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-    ],
-    [
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-    ],
-    [
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-    ],
-    [
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-    ],
-    [
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-    ],
-    [
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-      ["empty"],
-    ],
-  ];
   final periodController = TextEditingController();
   final roomController = TextEditingController();
   List<String> selectedRooms = [];
+  // List<List<List<String>>> subjects = [
+  //   [
+  //     ["6006", "6106"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //   ],
+  //   [
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //   ],
+  //   [
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //   ],
+  //   [
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //   ],
+  //   [
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //   ],
+  //   [
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //   ],
+  //   [
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //   ],
+  //   [
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //   ],
+  //   [
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //     ["empty"],
+  //   ],
+  // ];
   
   @override
   void initState() {
     super.initState();
-    cubit.getPeriods();
-    cubit.getRooms();
-    cubit.getSchedule();
+    cubitTable.getPeriods();
+    cubitTable.getRooms();
+    cubitTable.getSchedule(subjects);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => cubitTable,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
-          return current is Reload ;
+          return current is Reload||
+              current is GetPeriodsSuccessState||
+              current is GetRoomsSuccessState||
+              current is AddPeriodsSuccessState||
+              current is AddRoomsSuccessState||
+              current is UpdatePeriodsSuccessState||
+              current is UpdateRoomsSuccessState||
+              current is DeletePeriodsSuccessState||
+              current is DeleteRoomsSuccessState;
         },
         builder: (context, state) {
           return Scaffold(
@@ -217,10 +215,10 @@ class _TableScreenState extends State<TableScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => BlocProvider.value(
-                                  value: cubit, child: const AddScreen()),
+                                  value: cubitTable, child: const AddScreen()),
                             )).then((value) => (value) {
-                              cubit.getPeriods();
-                              cubit.getRooms();
+                              cubitTable.getPeriods();
+                              cubitTable.getRooms();
                             });
                       } else if (value == 1) {
                         Navigator.push(
@@ -228,8 +226,8 @@ class _TableScreenState extends State<TableScreen> {
                             MaterialPageRoute(
                               builder: (context) => const EditScreen(),
                             )).then((value) => (value) {
-                              cubit.getPeriods();
-                              cubit.getRooms();
+                              cubitTable.getPeriods();
+                              cubitTable.getRooms();
                             });
                       } else if (value == 2) {
                         Navigator.push(
@@ -237,8 +235,8 @@ class _TableScreenState extends State<TableScreen> {
                             MaterialPageRoute(
                               builder: (context) => const DeleteScreen(),
                             )).then((value) => (value) {
-                              cubit.getPeriods();
-                              cubit.getRooms();
+                              cubitTable.getPeriods();
+                              cubitTable.getRooms();
                             });
                       }
                     }),
@@ -247,8 +245,8 @@ class _TableScreenState extends State<TableScreen> {
             body: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
-                  height: (containerHeight*(cubit.days.length+1))+(10.sp+(8.sp*(cubit.days.length+2))),
-                  width: (containerWidth*(cubit.periods.length+1))+(10.sp+(8.sp*(cubit.periods.length+2))),
+                  height: (containerHeight*(cubitTable.days.length+1))+(10.sp+(8.sp*(cubitTable.days.length+2))),
+                  width: (containerWidth*(cubitTable.periods.length+1))+(10.sp+(8.sp*(cubitTable.periods.length+2))),
                   padding: EdgeInsets.all(10.sp),
                   child: PageView(
                     children: [
@@ -299,7 +297,7 @@ class _TableScreenState extends State<TableScreen> {
                                     //   scrollDirection: Axis.horizontal,
                                     child: Row(
                                       children: List<Widget>.generate(
-                                        cubit.periods.length,
+                                        cubitTable.periods.length,
                                         (index) => Container(
                                           height: containerHeight,
                                           width: containerWidth,
@@ -312,7 +310,7 @@ class _TableScreenState extends State<TableScreen> {
                                           child: Center(
                                             child: Text(
                                               //"period ''${index}",
-                                              cubit.periods[index].duration,
+                                              cubitTable.periods[index].duration,
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 19.sp),
@@ -331,7 +329,7 @@ class _TableScreenState extends State<TableScreen> {
                               height: 500.sp,
                               child: ListView.builder(
                                 scrollDirection: Axis.vertical,
-                                itemCount: cubit.days.length,
+                                itemCount: cubitTable.days.length,
                                 itemBuilder: (context, index1) => SizedBox(
                                   height: containerHeight,
                                   width: containerWidth,
@@ -349,7 +347,7 @@ class _TableScreenState extends State<TableScreen> {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            cubit.days[index1],
+                                            cubitTable.days[index1],
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                                 color: Colors.white,
@@ -363,7 +361,7 @@ class _TableScreenState extends State<TableScreen> {
                                           height: containerHeight,
                                           child: Row(
                                             children: List<Widget>.generate(
-                                              cubit.periods.length,
+                                              cubitTable.periods.length,
                                               (index2) => Container(
                                                 color: Colors.white,
                                                 child: Container(
@@ -378,22 +376,15 @@ class _TableScreenState extends State<TableScreen> {
                                                         EdgeInsets.symmetric(
                                                             horizontal: 4.sp),
                                                     child:DropdownButton<String>(
-                                                      value:
-                                                      //cubit.schedulesTable[index1][index2][0],
-                                                      dropDownValue=subjects[index1][index2][0],
+                                                      value: subjects[index1][index2][0],
                                                       onChanged: (String? newValue){
-                                                        setState(() {
-                                                          dropDownValue = newValue!;
-                                                        });
                                                       },
                                                       items: List.generate(subjects[index1][index2].length,
-                                                         // cubit.schedulesTable[index1][index2].length,
                                                               (int index) {
                                                         return DropdownMenuItem(
                                                           value: subjects[index1][index2][index],
-                                                          //cubit.schedulesTable[index1][index2][index],
                                                           child: Text(subjects[index1][index2][index]
-                                                              //cubit.schedulesTable[index1][index2][index]
+
                                                           ),
                                                         );
                                                       })..add(DropdownMenuItem(
@@ -466,9 +457,13 @@ class _TableScreenState extends State<TableScreen> {
                                                                               if(subjects[index1][index2].isEmpty){
                                                                                 subjects[index1][index2].add("empty");
                                                                               }
-                                                                              selectedRooms.clear();
-                                                                              setState(() {});
-                                                                              Navigator.of(context).pop();
+                                                                              if(selectedRooms.isNotEmpty){
+                                                                                selectedRooms.clear();
+                                                                                cubitTable.updateSchedule(subjects);
+                                                                                // setState(() {});
+                                                                                Navigator.of(context).pop();
+                                                                              }
+                                                                              cubitTable.updateSchedule(subjects);
                                                                             },
                                                                             child: const Text("Delete",style: TextStyle(color: Colors.brown),),
                                                                         ),
@@ -479,7 +474,7 @@ class _TableScreenState extends State<TableScreen> {
                                                                                 selectedRooms[i] = selectedRooms[i].substring(0, selectedRooms[i].length - " exist".length);
                                                                             }
                                                                             }
-                                                                            if(subjects[index1][index2][0]=="empty"){
+                                                                            if(subjects[index1][index2][0]=="empty"&&selectedRooms.isNotEmpty){
                                                                               for (int i = 0; i < selectedRooms.length; i++) {
                                                                                 subjects[index1][index2].add(selectedRooms[i]);
                                                                               }
@@ -499,9 +494,12 @@ class _TableScreenState extends State<TableScreen> {
                                                                               }
                                                                               }
                                                                             }
+                                                                            if(selectedRooms.isNotEmpty){
                                                                             selectedRooms.clear();
-                                                                            setState(() {});
+                                                                            cubitTable.updateSchedule(subjects);
                                                                             Navigator.of(context).pop();
+                                                                            }
+                                                                            cubitTable.updateSchedule(subjects);
                                                                           },
                                                                           child: const Text("Add",style: TextStyle(color: Colors.brown)),
                                                                         ),
@@ -520,7 +518,6 @@ class _TableScreenState extends State<TableScreen> {
                                                             );
                                                           },
                                                           child: const Text("Edit",style: TextStyle(color: Colors.black))),
-                                                          // Text("$index1""$index2"),
                                                         ),
                                                       )
 
@@ -549,7 +546,7 @@ class _TableScreenState extends State<TableScreen> {
     );
   }
   List<String> existenceChecker(int i, int j) {
-    List<String> roomNames = cubit.rooms.map((room) => room.name).toList();
+    List<String> roomNames = cubitTable.rooms.map((room) => room.name).toList();
 
     for (int y = 0; y < roomNames.length; y++) {
       for (int z = 0; z < subjects[i][j].length; z++) {
