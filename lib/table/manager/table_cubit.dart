@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:centralairconditioning/main.dart';
 import 'package:centralairconditioning/table/manager/table_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../../models.dart';
 
-
 class TableCubit extends Cubit<TableState> {
   TableCubit() : super(TableInitial());
+
   final days = [
     "Saturday",
     "Sunday",
@@ -19,9 +20,9 @@ class TableCubit extends Cubit<TableState> {
   ];
   List<Periods> periods = [];
   List<Rooms> rooms = [];
-  //List<Schedule> schedules =[];
- // List<List<List<String>>> schedulesTable = [];
-  void getPeriods() {
+  bool isLoading = true;
+
+  Future<void> getPeriods() async{
     ConstantVar.firestore.collection("periods")
         .get()
         .then((value) {
@@ -31,55 +32,106 @@ class TableCubit extends Cubit<TableState> {
         periods.add(period);
       }
       emit(GetPeriodsSuccessState());
-      //emit(Reload());
     }).catchError((error)
     {
       emit(GetPeriodsFailureState(error.toString()));
-      //emit(ReloadFailure(error.toString()));
     });
   }
 
-  void deletePeriod(String duration)async{
+  Future<void> deletePeriod(String duration)async{
     try {
+      int x = 0 , m = 0;
+      for (int z = 0 ; z < periods.length ; z++){
+        if (periods[z].duration==duration){
+          x = m ;
+        }
+        x++;
+      }
+      for (var innerList in subjects) {
+        innerList.removeAt(m);
+      }
+      for (int i = 0 ; i < 7 ; i++){
+        for (int j = 0 ; j < periods.length ; j++){
+          updateSchedule(subjects , i , j);
+        }
+      }
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
       await ConstantVar.firestore.collection("periods")
           .where('duration', isEqualTo: duration).get();
       if (querySnapshot.docs.isNotEmpty) {
+        await deletePeriodUpdate(m);
         final String documentId = querySnapshot.docs.first.id;
         await ConstantVar.firestore.collection("periods")
             .doc(documentId)
             .delete();
-        periods.removeWhere((element) => element.id== duration);
+        await getPeriods();
         emit(DeletePeriodsSuccessState());
-        //emit(Reload());
       }else {
         emit(DeletePeriodsFailureState('No period found with this id'));
-        //emit(ReloadFailure('No period found with this id'));
       }
     }catch (e) {
       emit(DeletePeriodsFailureState(e.toString()));
-     // emit(ReloadFailure(e.toString()));
+    }
+  }
+  Future<void> deletePeriodUpdate(int place)async{
+    for (int i = 0 ; i < periods.length ; i++) {
+      if(periods[i].index > place) {
+        final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await ConstantVar.firestore.collection("periods")
+            .where('index', isEqualTo: i).get();
+        if (querySnapshot.docs.isNotEmpty) {
+          final String documentId = querySnapshot.docs.first.id;
+          await ConstantVar.firestore.collection("periods")
+              .doc(documentId).update({
+            'index': i - 1,
+          });
+        }
+      }
     }
   }
 
-  void addPeriod()async{
+  Future<void> addPeriod()async{
+    // await addPeriodUpdate(place);
+    // for (var innerList in subjects) {
+    //   innerList.insert(place,["empty"]);
+    // }
+    // for (int i = 0 ; i < 7 ; i++){
+    //   await updateSchedule(subjects , i , place);
+    // }
     String duration = ConstantVar.periodController.text;
     String id = DateTime.now().microsecondsSinceEpoch.toString();
     final period = Periods(duration, id);
+        //, place);
     await ConstantVar.firestore
         .collection("periods")
         .doc(id)
         .set(period.toMap())
         .then((value) {
-      periods.add(period);
+          //periods.add(period);
+      periods.insert(periods.length+1,period);
+      isLoading=true;
       emit(AddPeriodsSuccessState());
-      //emit(Reload());
     }).catchError((error){
       emit(AddPeriodsFailureState("Error when add"));
-     // emit(ReloadFailure("error"));
     });
 
   }
+  // Future<void> addPeriodUpdate(int place)async{
+  //   for (int i = 0 ; i < periods.length ; i++) {
+  //     if(periods[i].index >= place) {
+  //       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+  //       await ConstantVar.firestore.collection("periods")
+  //           .where('index', isEqualTo: i).get();
+  //       if (querySnapshot.docs.isNotEmpty) {
+  //         final String documentId = querySnapshot.docs.first.id;
+  //         await ConstantVar.firestore.collection("periods")
+  //             .doc(documentId).update({
+  //           'index': i + 1,
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
 
   void updatePeriod(String period, String updateValue) async {
     try {
@@ -93,16 +145,13 @@ class TableCubit extends Cubit<TableState> {
           'duration': updateValue,
         }).then((value) {
           emit(UpdatePeriodsSuccessState());
-          //emit(Reload());
         });
       }
       else {
         emit(UpdatePeriodsFailureState('No period found with this id'));
-        //emit(ReloadFailure('No period found with this id'));
       }
     } catch (e) {
       emit(UpdatePeriodsFailureState(e.toString()));
-      //emit(ReloadFailure(e.toString()));
     }
   }
 
@@ -115,7 +164,6 @@ class TableCubit extends Cubit<TableState> {
         final room=Rooms.fromMap(document.data());
         rooms.add(room);
       }
-      //emit(Reload());
       emit(GetRoomsSuccessState());
     })
         .catchError((error)
@@ -123,11 +171,10 @@ class TableCubit extends Cubit<TableState> {
       print("Error Failure: ${error.toString()}");
     }
     emit(GetRoomsFailureState(error.toString()));
-      // emit(ReloadFailure(error.toString()));
     });
   }
 
-  void deleteRoom(String name)async{
+  Future<void> deleteRoom(String name)async{
     try {
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
       await ConstantVar.firestore.collection("rooms")
@@ -138,23 +185,21 @@ class TableCubit extends Cubit<TableState> {
             .doc(documentId)
             .delete();
         rooms.removeWhere((element) => element.id== name);
-        //emit(Reload());
         emit(DeleteRoomsSuccessState());
       }else {
-        //emit(ReloadFailure('No room found with this id'));
         emit(DeleteRoomsFailureState('No room found with this id'));
       }
     }catch (e) {
       emit(DeleteRoomsFailureState(e.toString()));
-      //emit(ReloadFailure(e.toString()));
     }
   }
 
   void addRoom()async{
     String name = ConstantVar.roomController.text;
     String id = DateTime.now().microsecondsSinceEpoch.toString();
-    int noOfpeople =0;
-    final room = Rooms(name, id,noOfpeople);
+    int noOfPeople =0;
+    List<int> color = [0,0,0,0];
+    final room = Rooms(name, id,noOfPeople,color);
     await ConstantVar.firestore
         .collection("rooms")
         .doc(id)
@@ -162,37 +207,30 @@ class TableCubit extends Cubit<TableState> {
         .then((value) {
       rooms.add(room);
       emit(AddRoomsSuccessState());
-      //emit(Reload());
     }).catchError((error){
       emit(AddRoomsFailureState("Error when add"));
-      //emit(ReloadFailure("error"));
     });
 
   }
 
-  void updateRoom(String idPeriod, String updateValue) async {
-    String room = updateValue;
+  void updateRoom(String room, String updateValue) async {
     try {
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
       await ConstantVar.firestore.collection("rooms")
-          .where('id', isEqualTo: idPeriod).get();
-
+          .where('name', isEqualTo: room).get();
       if (querySnapshot.docs.isNotEmpty) {
         final String documentId = querySnapshot.docs.first.id;
         await ConstantVar.firestore.collection("rooms")
             .doc(documentId).update({
-          'name': room,
+          'name': updateValue,
         }).then((value) {
           emit(UpdateRoomsSuccessState());
-          //emit(Reload());
         });
       } else {
         emit(UpdateRoomsFailureState('No room found with this id'));
-        // emit(ReloadFailure('No room found with this id'));
       }
     } catch (e) {
       emit(UpdateRoomsFailureState(e.toString()));
-      // emit(ReloadFailure(e.toString()));
     }
   }
 
@@ -214,77 +252,20 @@ class TableCubit extends Cubit<TableState> {
 
   }
 
-  // Future<List<List<List<String>>>> getSchedule(List<List<List<String>>> schedulesTable) async {
-  //   schedulesTable = List.generate(
-  //     7, (i) => List.generate(periods.length, (j) => [],),);
-  //   QuerySnapshot snapshot = await ConstantVar.firestore
-  //       .collection("schedule")
-  //       .get();
-  //     for (var doc in snapshot.docs) {
-  //       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-  //       int index1 = data['index1'];
-  //       int index2 = data['index2'];
-  //       List<String> rooms = List<String>.from(data['rooms']);
-  //       schedulesTable[index1][index2] = rooms;
-  //       print("Rooms = ${rooms.length}");
-  //       print("Schedules = ${schedulesTable.length}");
-  //     }
-  //     emit(Reload());
-  //     return schedulesTable;
-  //
-  // }
-  Future<List<List<List<String>>>> getSchedule(List<List<List<String>>> schedulesTable) async {
-  schedulesTable = List.generate(
-      7, (i) => List.generate(periods.length, (j) => [],),);
-    try {
-      QuerySnapshot snapshot = await ConstantVar.firestore
-          .collection("schedule")
-          .get();
-      for (var doc in snapshot.docs) {
-        print("2");
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        print("data= $data");
-        int index1 = data['index1'];
-        print("index1= $index1");
-        int index2 = data['index2'];
-        print("index2= $index2");
-        List<String> rooms = List<String>.from(data['rooms']);
-        print("rooms= ${rooms[1]}");
-        for(int i=0;i<rooms.length;i++){
-          schedulesTable[index1][index2].add(rooms[i]);
-        }
-
-        print("Schedules = ${schedulesTable.length}");
-      }
-      emit(Reload());
-      return schedulesTable;
-    } catch (e) {
-      print("Error when get schedule: $e");
-      emit(ReloadFailure(e.toString()));
-      return [];
-    }
-  }
-
-  Future<void> updateSchedule(List<List<List<String>>> table) async {
-    for (int i = 0; i < 7; i++) {
-      for (int j = 0; j < periods.length; j++) {
+  Future<void> updateSchedule(List<List<List<String>>> table,int i , int j) async {
         List<String> rooms = table[i][j];
         String id = "$i$j";
         await ConstantVar.firestore
             .collection("schedule")
             .doc(id)
-            .update({'rooms': rooms, 'index1': i, 'index2': j})
+            .set({'rooms': rooms, 'index1': i, 'index2': j})
             .then((_) {
           emit(Reload());
         }).catchError((error) {
           emit(ReloadFailure('There is no table'));
         });
-      }
-    }
+
 
   }
-
-
-
 
 }

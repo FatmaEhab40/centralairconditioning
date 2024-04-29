@@ -9,12 +9,12 @@ import '../../table/page/table_screen.dart';
 import '../manager/table_cubit.dart';
 import '../manager/table_state.dart';
 
-List<DropDownValueModel> dropDownListPeriods = cubitTable.periods
+List<DropDownValueModel> dropDownListPeriods = cubit.periods
     .map(
         (period) => DropDownValueModel(name: period.duration, value: period.id))
     .toList();
 
-List<DropDownValueModel> dropDownListRooms = cubitTable.rooms
+List<DropDownValueModel> dropDownListRooms = cubit.rooms
     .map((room) => DropDownValueModel(name: room.name, value: room.id))
     .toList();
 
@@ -32,7 +32,7 @@ class _DeleteScreenState extends State<DeleteScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubitTable,
+      create: (context) => cubit,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
           return current is Reload;
@@ -42,14 +42,12 @@ class _DeleteScreenState extends State<DeleteScreen> {
             appBar: AppBar(
               backgroundColor: ConstantVar.backgroundPage,
               centerTitle: true,
+              iconTheme: const IconThemeData(color: ConstantVar.backgroundPage),
               title: GradientText(
                 'Delete',
                 style: GoogleFonts.eagleLake(fontSize: 20.sp),
                 gradientType: GradientType.linear,
                 colors: ConstantVar.gradientList,
-              ),
-              iconTheme: const IconThemeData(
-                color: Colors.brown,
               ),
             ),
             body: Container(
@@ -88,7 +86,7 @@ class _DeleteScreenState extends State<DeleteScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubitTable.periods.length,
+                    dropDownItemCount: cubit.periods.length,
                     dropDownList: dropDownListPeriods,
                     onChanged: (value) {},
                   ),
@@ -123,7 +121,7 @@ class _DeleteScreenState extends State<DeleteScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubitTable.rooms.length,
+                    dropDownItemCount: cubit.rooms.length,
                     dropDownList: dropDownListRooms,
                     onChanged: (value) {},
                   ),
@@ -131,22 +129,23 @@ class _DeleteScreenState extends State<DeleteScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (periodController.dropDownValue != null &&
-                            periodController.dropDownValue!.name.isNotEmpty) {
-                          String selectedValue =
-                              periodController.dropDownValue!.name;
-                          //print(selectedValue);
-                          cubitTable.deletePeriod(selectedValue);
-                        }
-                        else if (roomController.dropDownValue != null &&
+                      onPressed: () async {
+                        if (roomController.dropDownValue != null &&
                             roomController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               roomController.dropDownValue!.name;
                           //print(selectedValue);
-                          cubitTable.deleteRoom(selectedValue);
+                          await cubit.deleteRoom(selectedValue);
                         }
-                        Navigator.pop(context);
+                        else if (periodController.dropDownValue != null &&
+                            periodController.dropDownValue!.name.isNotEmpty) {
+                          String selectedValue =
+                              periodController.dropDownValue!.name;
+                          await cubit.deletePeriod(selectedValue);
+                        }
+                        toast("Done");
+                        ConstantVar.periodController.clear();
+                        ConstantVar.roomController.clear();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.brown,
@@ -162,25 +161,29 @@ class _DeleteScreenState extends State<DeleteScreen> {
                     ),
                   ),
                   SizedBox(height: 5.sp),
-                  // SizedBox(
-                  //   width: double.infinity,
-                  //   child: ElevatedButton(
-                  //     onPressed: () {
-                  //       Navigator.pop(context);
-                  //     },
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Colors.brown,
-                  //       padding: EdgeInsets.symmetric(
-                  //           horizontal: 5.0.sp, vertical: 5.0.sp),
-                  //       shape: RoundedRectangleBorder(
-                  //           borderRadius: BorderRadius.circular(10.0.sp)),
-                  //     ),
-                  //     child: Text(
-                  //       "Save",
-                  //       style: TextStyle(color: Colors.white, fontSize: 20.sp),
-                  //     ),
-                  //   ),
-                  // ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const TableScreen(),
+                            ));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.brown,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 5.0.sp, vertical: 5.0.sp),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0.sp)),
+                      ),
+                      child: Text(
+                        "Schedule",
+                        style: TextStyle(color: Colors.white, fontSize: 20.sp),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

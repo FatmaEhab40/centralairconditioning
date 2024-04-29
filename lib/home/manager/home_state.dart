@@ -1,6 +1,15 @@
 
 abstract class HomeState {}
 
+class GetPeriodsSuccessState extends HomeState {
+  GetPeriodsSuccessState();
+}
+
+class GetPeriodsFailureState extends HomeState {
+  final String errorMessage;
+  GetPeriodsFailureState(this.errorMessage);
+}
+
 class HomeInitial extends HomeState {}
 
 class GetRoomsSuccessState extends HomeState {}

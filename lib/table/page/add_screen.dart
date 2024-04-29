@@ -19,14 +19,12 @@ class _AddScreenState extends State<AddScreen> {
       appBar: AppBar(
         backgroundColor: ConstantVar.backgroundPage,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: ConstantVar.backgroundPage),
         title: GradientText(
           'Add',
           style: GoogleFonts.eagleLake(fontSize: 20.sp),
           gradientType: GradientType.linear,
           colors: ConstantVar.gradientList,
-        ),
-        iconTheme: const IconThemeData(
-          color: Colors.brown,
         ),
       ),
       body: Container(
@@ -52,27 +50,55 @@ class _AddScreenState extends State<AddScreen> {
                     prefixIcon: const Icon(Icons.access_time_filled,
                         color: Colors.brown),
                     suffixIcon: IconButton(
-                        onPressed: () {
+                        onPressed: () async {
+                        //  setState(() {
+                           // cubit.isLoading = true;
+                         // });
                           if (ConstantVar.periodController.text.isEmpty ||
-                              ConstantVar.periodController.text == "") {
+                              ConstantVar.periodController.text == ""||
+                              !ConstantVar.periodController.text.contains(":")&&
+                              !ConstantVar.periodController.text.contains("-")
+                          //||
+                             // ConstantVar.indexController.text.isEmpty ||
+                             //  int.parse(ConstantVar.indexController.text) > cubit.periods.length+1||
+                             //  int.parse(ConstantVar.indexController.text) <= 0
+                          ) {
                             toast("Not allowed");
                           } else {
-                            cubitTable.addPeriod();
+                            await cubit.addPeriod();
+                            cubit.isLoading = false;
+                                //int.parse(ConstantVar.indexController.text)-1);
+
                             ConstantVar.periodController.clear();
+                            //ConstantVar.indexController.clear();
                           }
+                          cubit.isLoading? const CircularProgressIndicator()
+                          : toast("Done");
                         },
                         icon: const Icon(Icons.add),
                         color: Colors.brown)),
                 cursorColor: const Color(0xFF3E2723),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Period is required !";
-                  } else if (value == "") {
-                    return "Period is wrong !";
-                  }
-                  return null;
-                },
               ),
+              // TextFormField(
+              //   controller: ConstantVar.indexController,
+              //   keyboardType: TextInputType.number,
+              //   inputFormatters: <TextInputFormatter>[
+              //     FilteringTextInputFormatter.digitsOnly
+              //   ],
+              //   decoration: InputDecoration(
+              //     hintText: "index between 1-${cubit.periods.length+1}",
+              //     focusedBorder: OutlineInputBorder(
+              //         borderSide: BorderSide(
+              //             color: const Color(0xFF3E2723), width: 5.sp)),
+              //     hintStyle: const TextStyle(
+              //         color: Colors.brown, fontWeight: FontWeight.bold),
+              //     enabledBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(
+              //           color: const Color(0xFF3E2723), width: 5.sp),
+              //     ),
+              //   ),
+              //   cursorColor: const Color(0xFF3E2723),
+              // ),
               SizedBox(height: 20.sp),
               TextFormField(
                 controller: ConstantVar.roomController,
@@ -94,42 +120,38 @@ class _AddScreenState extends State<AddScreen> {
                               ConstantVar.roomController.text == "") {
                             toast("Not allowed");
                           } else {
-                            cubitTable.addRoom();
+                            cubit.addRoom();
                             ConstantVar.roomController.clear();
                           }
                         },
                         icon: const Icon(Icons.add),
                         color: Colors.brown)),
                 cursorColor: const Color(0xFF3E2723),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Room is required !";
-                  } else if (value == "") {
-                    return "Room is wrong !";
-                  }
-                  return null;
-                },
               ),
               SizedBox(height: 5.sp),
-              // SizedBox(
-              //   width: double.infinity,
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //         Navigator.pop(context);
-              //     },
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: Colors.brown,
-              //       padding: EdgeInsets.symmetric(
-              //           horizontal: 5.0.sp, vertical: 5.0.sp),
-              //       shape: RoundedRectangleBorder(
-              //           borderRadius: BorderRadius.circular(10.0.sp)),
-              //     ),
-              //     child: Text(
-              //       "Save",
-              //       style: TextStyle(color: Colors.white, fontSize: 15.sp),
-              //     ),
-              //   ),
-              // ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TableScreen(),
+                        ));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.brown,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 5.0.sp, vertical: 5.0.sp),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0.sp)),
+                  ),
+                  child: Text(
+                    "Schedule",
+                    style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

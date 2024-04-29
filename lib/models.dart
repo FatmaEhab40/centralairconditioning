@@ -13,6 +13,7 @@ class ConstantVar{
   static final passwordController1 = TextEditingController();
   static final passwordController2 = TextEditingController();
   static  final periodController = TextEditingController();
+  static  final indexController = TextEditingController();
   static final roomController = TextEditingController();
   static final formKey = GlobalKey<FormState>();
 
@@ -21,7 +22,8 @@ class ConstantVar{
     const Color(0xFF8D6E63),
     const Color(0xFFA1887F),
     const Color(0xFFF9A825),
-    const Color(0xFFF57F17)
+    const Color(0xFFF57F17),
+    //const Color.fromRGBO(255, 218, 0, 1.0)
   ];
   static const Color backgroundPage = Color(0xFFD7CCC8);
   static const Color backgroundContainer = Color(0xFF8D6E63);
@@ -44,13 +46,16 @@ void toast(message) {
 class Periods {
   String duration = "";
   String id = "";
+  int index = 0;
   String userId = ConstantVar.auth.currentUser!.uid;
   Periods(this.duration, this.id);
+      //,this.index);
 
   Map<String, dynamic> toMap() {
     return {
       "duration": duration,
       "id": id,
+     // "index": index,
       "userId": userId,
     };
   }
@@ -58,6 +63,7 @@ class Periods {
   Periods.fromMap(Map<dynamic, dynamic> data) {
     duration = data['duration'];
     id = data['id'];
+   // index = data['index'];
     userId = data['userId'];
   }
 
@@ -65,6 +71,7 @@ class Periods {
     return {
       "duration": duration,
       "id": id,
+     // "index": index,
       "userId": userId,
     };
   }
@@ -74,11 +81,15 @@ class Rooms {
   String name = "";
   int noOfpeople=0;
   String id = "";
+  int temp = 0 ;
+  List<int> color = [0,0,0,0];
   String userId = ConstantVar.auth.currentUser!.uid;
-  Rooms(this.name, this.id,this.noOfpeople);
+  Rooms(this.name, this.id,this.noOfpeople,this.color);
 
   Map<String, dynamic> toMap() {
     return {
+      "color": color,
+      "temp": temp,
       "name": name,
       "noOfpeople" : noOfpeople,
       "id": id,
@@ -88,15 +99,19 @@ class Rooms {
 
   Rooms.fromMap(Map<dynamic, dynamic> data) {
     name = data['name'];
-    noOfpeople = data['noOfpeople']??0;
+    noOfpeople = data['noOfpeople'];
     id = data['id'];
+    temp = data['temp'];
+    color = List<int>.from(data['color']);
     userId = data['userId'];
   }
 
   Map<String, dynamic> toJson() {
     return {
+      "color": color,
+      "temp": temp,
       "name": name,
-     "noOfpeople" : noOfpeople,
+      "noOfpeople" : noOfpeople,
       "id": id,
       "userId": userId,
     };
@@ -118,7 +133,7 @@ class Schedule {
   }
 
   Schedule.fromMap(Map<dynamic, dynamic> data) {
-    rooms = data['rooms'];
+    rooms = List<String>.from(data['rooms']);
     index1 = data['index1'];
     index2 = data['index2'];
   }

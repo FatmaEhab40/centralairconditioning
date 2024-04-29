@@ -1,5 +1,5 @@
 import 'package:centralairconditioning/models.dart';
-import 'package:centralairconditioning/table/page/table_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +10,196 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:app_settings/app_settings.dart';
+import 'package:workmanager/workmanager.dart';
 import 'home/page/home_screen.dart';
-import 'login/page/login_screen.dart';
+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) {
+    if (kDebugMode) {
+      print("Native called background task: $task");
+    } //simpleTask will be emitted here.
+    return Future.value(true);
+  });
+}
+
+List<List<List<String>>> subjects = [
+  [
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+  ],
+  [
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+  ],
+  [
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+  ],
+  [
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+  ],
+  [
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+  ],
+  [
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+  ],
+  [
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+    ["empty"],
+  ],
+];
+
+Future<void> getSchedule(List<List<List<String>>> s) async {
+    QuerySnapshot snapshot = await ConstantVar.firestore
+        .collection("schedule")
+        .get();
+    for (var doc in snapshot.docs) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      int index1 = data['index1'];
+      int index2 = data['index2'];
+      dynamic roomsData = List<String>.from(data['rooms']);
+
+      if (roomsData is String) {
+            s[index1][index2].add(roomsData);
+            s[index1][index2].removeAt(0);
+      } else if (roomsData is List<String>) {
+        for (String room in roomsData) {
+              s[index1][index2].add(room);
+        }
+        s[index1][index2].removeAt(0);
+      }
+  }
+}
 
 Future<bool> checkInternetConnection() async {
   bool hasConnection = await InternetConnectionChecker().hasConnection;
@@ -21,7 +209,7 @@ Future<bool> checkInternetConnection() async {
   return hasConnection;
 }
 
-Widget showDialog() {
+Widget showDialog1() {
   return AlertDialog(
     backgroundColor: ConstantVar.backgroundPage,
     shape: const RoundedRectangleBorder(
@@ -53,9 +241,13 @@ Future<void> restartApp() async {
 }
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
  await Firebase.initializeApp();
+  await getSchedule(subjects);
+  Workmanager().initialize(
+      callbackDispatcher, // The top level function, aka callbackDispatcher
+      isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+  );
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,

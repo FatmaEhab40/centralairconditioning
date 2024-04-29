@@ -11,9 +11,10 @@ import '../../profile/page/profile_screen.dart';
 import '../../table/page/table_screen.dart';
 import '../manager/home_cubit.dart';
 import '../manager/home_state.dart';
+import 'dart:async';
+
 
 final cubit = HomeCubit();
-const Color color = Colors.green;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,10 +24,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  void refresh() {
+    setState(() {
+      // Trigger a rebuild of the screen
+    });
+  }
   @override
   void initState() {
     super.initState();
+    cubit.getPeriods();
     cubit.getRooms();
+    Future.delayed(const Duration(seconds: 5), () {
+      cubit.fetchData(0);
+    });
+  }
+  @override
+  void dispose() {
+    cubit.close();
+    super.dispose();
   }
 
   @override
@@ -35,9 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: ConstantVar.backgroundPage,
       appBar: AppBar(
         backgroundColor: ConstantVar.backgroundPage,
-        iconTheme: const IconThemeData(
-          color: ConstantVar.backgroundPage,
-        ),
+        iconTheme: const IconThemeData(color: ConstantVar.backgroundPage),
         title: GradientText(
           'Home',
           style: GoogleFonts.eagleLake(fontSize: 20.sp),
@@ -47,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const TableScreen(),
@@ -59,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: ConstantVar.backgroundPage,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0.sp))),
-            child: GradientText('Table',
+            child: GradientText('Schedule',
                 style: GoogleFonts.eagleLake(fontSize: 17.sp),
                 colors: ConstantVar.gradientList),
           ),
@@ -119,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, state) {
             return ListView.builder(
                         scrollDirection: Axis.vertical,
-                        itemCount: cubit.rooms.length ,
+                        itemCount: rooms.length ,
                         itemBuilder: (context, index) {
                           return listRooms(index );
                         },
@@ -136,14 +149,14 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Container(
           margin: EdgeInsets.all(15.sp),
-          height: 55.sp,
+          height: 60.sp,
           width:  58.sp,
-          color: color,
+          color: Color.fromRGBO(rooms[index].color[0], rooms[index].color[1], rooms[index].color[2], 1),
         ),
         Column(
           children: [
             Text(
-              cubit.rooms[index].name,
+              rooms[index].name,
               style:  TextStyle(fontSize: 17.sp,
                   fontWeight: FontWeight.w500, color: Colors.white),
             ),
@@ -155,9 +168,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 10.sp),
             Text(
-              "Number of People: ${cubit.rooms[index].noOfpeople}",
+              "Number of People: ${rooms[index].noOfpeople}",
               style:
                TextStyle(fontSize: 17.sp,fontWeight: FontWeight.w500, color: Colors.white),
+            ),
+            SizedBox(height: 10.sp),
+            Text(
+              "Temp: ${rooms[index].temp}",
+              style:
+              TextStyle(fontSize: 17.sp,fontWeight: FontWeight.w500, color: Colors.white),
             ),
           ],
         ),

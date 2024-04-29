@@ -9,12 +9,12 @@ import '../../models.dart';
 import '../manager/table_cubit.dart';
 import '../manager/table_state.dart';
 
-List<DropDownValueModel> dropDownListPeriods = cubitTable.periods
+List<DropDownValueModel> dropDownListPeriods = cubit.periods
     .map(
         (period) => DropDownValueModel(name: period.duration, value: period.id))
     .toList();
 
-List<DropDownValueModel> dropDownListRooms = cubitTable.rooms
+List<DropDownValueModel> dropDownListRooms = cubit.rooms
     .map((room) => DropDownValueModel(name: room.name, value: room.id))
     .toList();
 
@@ -32,7 +32,7 @@ class _EditScreenState extends State<EditScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubitTable,
+      create: (context) => cubit,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
           return current is Reload;
@@ -42,14 +42,12 @@ class _EditScreenState extends State<EditScreen> {
             appBar: AppBar(
               backgroundColor: ConstantVar.backgroundPage,
               centerTitle: true,
+              iconTheme: const IconThemeData(color: ConstantVar.backgroundPage),
               title: GradientText(
                 'Edit',
                 style: GoogleFonts.eagleLake(fontSize: 20.sp),
                 gradientType: GradientType.linear,
                 colors: ConstantVar.gradientList,
-              ),
-              iconTheme: const IconThemeData(
-                color: Colors.brown,
               ),
             ),
             body: Container(
@@ -88,7 +86,7 @@ class _EditScreenState extends State<EditScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubitTable.periods.length,
+                    dropDownItemCount: cubit.periods.length,
                     dropDownList: dropDownListPeriods,
                     onChanged: (value) {},
                   ),
@@ -123,7 +121,7 @@ class _EditScreenState extends State<EditScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubitTable.rooms.length,
+                    dropDownItemCount: cubit.rooms.length,
                     dropDownList: dropDownListRooms,
                     onChanged: (value) {},
                   ),
@@ -163,7 +161,11 @@ class _EditScreenState extends State<EditScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const TableScreen(),
+                            ));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.brown,
@@ -173,7 +175,7 @@ class _EditScreenState extends State<EditScreen> {
                             borderRadius: BorderRadius.circular(10.0.sp)),
                       ),
                       child: Text(
-                        "Save",
+                        "Schedule",
                         style: TextStyle(color: Colors.white, fontSize: 20.sp),
                       ),
                     ),
@@ -228,7 +230,7 @@ class _EditScreenState extends State<EditScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         String period = ConstantVar.periodController.text;
-                        cubitTable.updatePeriod(selectedValue, period);
+                        cubit.updatePeriod(selectedValue, period);
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
@@ -288,7 +290,7 @@ class _EditScreenState extends State<EditScreen> {
               textAlign: TextAlign.center,
             ),
             content: TextFormField(
-              controller: ConstantVar.periodController,
+              controller: ConstantVar.roomController,
               decoration: InputDecoration(
                 labelText: "Room",
                 focusedBorder: OutlineInputBorder(
@@ -312,9 +314,7 @@ class _EditScreenState extends State<EditScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         String room = ConstantVar.roomController.text;
-                        //print("3");
-                        cubitTable.updateRoom(selectedValue, room);
-                        //print("4, room => $room");
+                        cubit.updateRoom(selectedValue, room);
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
