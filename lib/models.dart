@@ -79,7 +79,7 @@ class Periods {
 
 class Rooms {
   String name = "";
-  String used = "";
+  String inSchedule = "";
   int noOfpeople=0;
   String id = "";
   int temp = 0 ;
@@ -95,6 +95,7 @@ class Rooms {
       "noOfpeople" : noOfpeople,
       "id": id,
       "userId": userId,
+     // "inSchedule":inSchedule
     };
   }
 
@@ -105,6 +106,7 @@ class Rooms {
     temp = data['temp'];
     color = List<int>.from(data['color']);
     userId = data['userId'];
+  //  inSchedule = data['inSchedule'];
   }
 
   Map<String, dynamic> toJson() {
@@ -115,6 +117,7 @@ class Rooms {
       "noOfpeople" : noOfpeople,
       "id": id,
       "userId": userId,
+      //"inSchedule":inSchedule
     };
   }
 }

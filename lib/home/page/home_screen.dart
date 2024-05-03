@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: Axis.vertical,
                         itemCount: rooms.length ,
                         itemBuilder: (context, index) {
-                        return listRooms(index, inSchedule);
+                        return listRooms(index);
                     },
                );
           },
@@ -142,9 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-
-  Widget listRooms(int index, bool inSchedule)   {
+  Widget listRooms(int index)   {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -161,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w500, color: Colors.white),
              ),
             SizedBox(height: 10.sp),
-            Text('In schedule : $inSchedule' ,
+            Text('In schedule : ${rooms[index].inSchedule}' ,
               style:  TextStyle(fontSize: 17.sp,
                   fontWeight: FontWeight.w500, color: Colors.white),
             ),

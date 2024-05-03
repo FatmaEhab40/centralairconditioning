@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'dart:async';
 List<Rooms> rooms = [];
 List<Periods> periods = [];
-bool inSchedule=true;
+
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitial());
 
@@ -114,7 +114,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> fetchData(int index) async {
     bool c = await there(index);
-    inSchedule = c;
     final response = await http.get(Uri.parse('http://10.0.2.2:5000/api'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -163,6 +162,7 @@ class HomeCubit extends Cubit<HomeState> {
         rooms[index].color = [171,0,0,1];
         rooms[index].temp = 0;
       }
+
       emit(Reload());
       Future.delayed(const Duration(seconds: 5), () {
         fetchData(index);
@@ -175,17 +175,32 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<bool> there(int index) async {
+    bool inSchedule = false;
     if (currentPeriod() != 'null') {
-      for (int i = 0; i < subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())].length; i++) {
-        if (subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())][i] == rooms[index].name) {
+      for (int i = 0;
+      i < subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())].length;
+      i++) {
+        if (subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())][i]
+            == rooms[index].name) {
+          inSchedule = true;
           return true;
         }
       }
-      return false;
-    } else {
-      return false;
     }
+    rooms[index].inSchedule = inSchedule.toString();
+    return false;
   }
+  //         return true;
+  //       }
+  //     }
+  //     return false;
+  //   }
+  //
+  //   else {
+  //     return false;
+  //   }
+  //
+  // }
 
   int getCurrentDayOfWeek() {
     List<int> daysOfWeek = [2, 3, 4, 5, 6, 0, 1];
@@ -218,13 +233,43 @@ class HomeCubit extends Cubit<HomeState> {
         ((currentTime.hour == endHour &&
         currentTime.minute <= endMinute)||
             currentTime.hour < endHour)){
+
       return '$i';
     }
     parts.clear();
     pop1.clear();
     pop2.clear();
+
     }
     return 'null';
+
   }
 
+
+  // void storeFetchedDataInFirebase(int index, rooms) {
+  //   String name = ConstantVar.roomController.text;
+  //   String id = "1709135121528823";
+  //   int noOfpeople =0;
+  //   List<int> color = [0,0,0,0];
+  //   final room = Rooms(name, id,noOfpeople,color);
+  //   await ConstantVar.firestore
+  //       .collection("rooms")
+  //       .doc(id)
+  //       .set(room.toMap())
+  //
+  //
+  //   // Prepare the data to be stored
+  //   Map<String, dynamic> roomData = {
+  //     'noOfpeople': rooms[0].noOfpeople,
+  //     'color': rooms[index].color,
+  //     'temp': rooms[index].temp,
+  //   };
+  //
+  //   // Add the data to the first document
+  //   firstRoomDocument.set(roomData).then((value) {
+  //     print('Fetched data stored in the first document in the "rooms" collection');
+  //   }).catchError((error) {
+  //     print('Error storing fetched data: $error');
+  //   });
+  // }
 }
