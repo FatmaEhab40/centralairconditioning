@@ -21,7 +21,8 @@ class TableCubit extends Cubit<TableState> {
   List<Periods> periods = [];
   List<Rooms> rooms = [];
   bool isLoading = true;
-
+  int x = 0;
+  int m = 0;
   Future<void> getPeriods() async{
     ConstantVar.firestore.collection("periods")
         .get()
@@ -40,7 +41,6 @@ class TableCubit extends Cubit<TableState> {
 
   Future<void> deletePeriod(String duration)async{
     try {
-      int x = 0 , m = 0;
       for (int z = 0 ; z < periods.length ; z++){
         if (periods[z].duration==duration){
           x = m ;

@@ -12,6 +12,7 @@ import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:workmanager/workmanager.dart';
 import 'home/page/home_screen.dart';
+import 'login/page/login_screen.dart';
 
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) {

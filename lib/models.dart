@@ -79,6 +79,7 @@ class Periods {
 
 class Rooms {
   String name = "";
+  String used = "";
   int noOfpeople=0;
   String id = "";
   int temp = 0 ;

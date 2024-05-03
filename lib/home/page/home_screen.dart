@@ -130,20 +130,21 @@ class _HomeScreenState extends State<HomeScreen> {
              current is UpdateRoomsSuccessState;
           },
           builder: (context, state) {
-            return ListView.builder(
+                  return ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: rooms.length ,
                         itemBuilder: (context, index) {
-                          return listRooms(index );
-                        },
-                      );
+                        return listRooms(index, inSchedule);
+                    },
+               );
           },
         ),
       ),
     );
   }
 
-  Widget listRooms(int index) {
+
+  Widget listRooms(int index, bool inSchedule)   {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -156,7 +157,11 @@ class _HomeScreenState extends State<HomeScreen> {
         Column(
           children: [
             Text(
-              rooms[index].name,
+              "${rooms[index].name} ",
+              style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w500, color: Colors.white),
+             ),
+            SizedBox(height: 10.sp),
+            Text('In schedule : $inSchedule' ,
               style:  TextStyle(fontSize: 17.sp,
                   fontWeight: FontWeight.w500, color: Colors.white),
             ),
@@ -182,5 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
     );
+    }
+
+
   }
-}

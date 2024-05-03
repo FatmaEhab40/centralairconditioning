@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:async';
 List<Rooms> rooms = [];
 List<Periods> periods = [];
+bool inSchedule=true;
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitial());
 
@@ -22,11 +23,9 @@ class HomeCubit extends Cubit<HomeState> {
         periods.add(period);
       }
       emit(GetPeriodsSuccessState());
-      //emit(Reload());
     }).catchError((error)
     {
       emit(GetPeriodsFailureState(error.toString()));
-      //emit(ReloadFailure(error.toString()));
     });
   }
 
@@ -39,7 +38,6 @@ class HomeCubit extends Cubit<HomeState> {
         final room=Rooms.fromMap(document.data());
         rooms.add(room);
       }
-      //emit(Reload());
       emit(GetRoomsSuccessState());
     })
         .catchError((error)
@@ -47,7 +45,6 @@ class HomeCubit extends Cubit<HomeState> {
       print("Error Failure: ${error.toString()}");
     }
     emit(GetRoomsFailureState(error.toString()));
-     // emit(ReloadFailure(error.toString()));
     });
   }
 
@@ -62,15 +59,13 @@ class HomeCubit extends Cubit<HomeState> {
             .doc(documentId)
             .delete();
         rooms.removeWhere((element) => element.id== name);
-        //emit(Reload());
+
         emit(DeleteRoomsSuccessState());
       }else {
-        //emit(ReloadFailure('No room found with this id'));
         emit(DeleteRoomsFailureState('No room found with this id'));
       }
     }catch (e) {
       emit(DeleteRoomsFailureState(e.toString()));
-      //emit(ReloadFailure(e.toString()));
     }
   }
 
@@ -87,10 +82,8 @@ class HomeCubit extends Cubit<HomeState> {
         .then((value) {
       rooms.add(room);
       emit(AddRoomsSuccessState());
-      //emit(Reload());
     }).catchError((error){
       emit(AddRoomsFailureState("Error when add"));
-      //emit(ReloadFailure("error"));
     });
 
   }
@@ -109,21 +102,19 @@ class HomeCubit extends Cubit<HomeState> {
           'name': room,
         }).then((value) {
           emit(UpdateRoomsSuccessState());
-          //emit(Reload());
         });
       } else {
         emit(UpdateRoomsFailureState('No room found with this id'));
-       // emit(ReloadFailure('No room found with this id'));
       }
     } catch (e) {
       emit(UpdateRoomsFailureState(e.toString()));
-     // emit(ReloadFailure(e.toString()));
     }
   }
 
 
-  Future<void> fetchData(int index) async {//summer checker
+  Future<void> fetchData(int index) async {
     bool c = await there(index);
+    inSchedule = c;
     final response = await http.get(Uri.parse('http://10.0.2.2:5000/api'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -173,13 +164,13 @@ class HomeCubit extends Cubit<HomeState> {
         rooms[index].temp = 0;
       }
       emit(Reload());
-      Future.delayed(Duration(seconds: 5), () {
+      Future.delayed(const Duration(seconds: 5), () {
         fetchData(index);
       });
-    } else {
+    }
+    else {
       emit(ReloadFailure('Failed to load data'));
       throw Exception('Failed to load data');
-
     }
   }
 
@@ -235,9 +226,5 @@ class HomeCubit extends Cubit<HomeState> {
     }
     return 'null';
   }
-
-
-
-
 
 }

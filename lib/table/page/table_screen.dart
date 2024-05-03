@@ -219,8 +219,9 @@ class _TableScreenState extends State<TableScreen> {
                                           ),
                                           child: Center(
                                             child: Text(
+                                                cubit.periods[index].duration,
                                               //"period ''${index}",
-                                              "${index+1}(${cubit.periods[index].duration})",
+                                              //"${index+1}(${cubit.periods[index].duration})",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 19.sp),

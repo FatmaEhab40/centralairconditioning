@@ -42,6 +42,7 @@ class UpdateRoomsFailureState extends HomeState {
 class Reload extends HomeState {
   Reload();
 }
+
 class ReloadFailure  extends HomeState {
   final String errorMessage;
   ReloadFailure (this.errorMessage);
