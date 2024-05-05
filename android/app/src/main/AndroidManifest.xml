@@ -7,7 +7,7 @@
 
     <application
 
-        android:label="centralairconditioning"
+        android:label="Central Air Conditioning"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"

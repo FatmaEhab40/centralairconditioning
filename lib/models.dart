@@ -79,13 +79,13 @@ class Periods {
 
 class Rooms {
   String name = "";
-  String inSchedule = "";
+  String inSchedule ="";
   int noOfpeople=0;
   String id = "";
   int temp = 0 ;
   List<int> color = [0,0,0,0];
   String userId = ConstantVar.auth.currentUser!.uid;
-  Rooms(this.name, this.id,this.noOfpeople,this.color);
+  Rooms(this.name, this.id,this.noOfpeople,this.color,this.inSchedule);
 
   Map<String, dynamic> toMap() {
     return {
@@ -95,7 +95,7 @@ class Rooms {
       "noOfpeople" : noOfpeople,
       "id": id,
       "userId": userId,
-     // "inSchedule":inSchedule
+      "inSchedule":inSchedule,
     };
   }
 
@@ -106,7 +106,7 @@ class Rooms {
     temp = data['temp'];
     color = List<int>.from(data['color']);
     userId = data['userId'];
-  //  inSchedule = data['inSchedule'];
+    inSchedule = data['inSchedule'];
   }
 
   Map<String, dynamic> toJson() {
@@ -117,7 +117,7 @@ class Rooms {
       "noOfpeople" : noOfpeople,
       "id": id,
       "userId": userId,
-      //"inSchedule":inSchedule
+      "inSchedule":inSchedule
     };
   }
 }

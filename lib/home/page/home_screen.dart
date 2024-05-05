@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     cubit.getRooms();
     Future.delayed(const Duration(seconds: 5), () {
       cubit.fetchData(0);
+      cubit.checkSchedule();
     });
   }
   @override
@@ -159,7 +160,8 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w500, color: Colors.white),
              ),
             SizedBox(height: 10.sp),
-            Text('In schedule : ${rooms[index].inSchedule}' ,
+            Text(
+              'In schedule : ${rooms[index].inSchedule}',
               style:  TextStyle(fontSize: 17.sp,
                   fontWeight: FontWeight.w500, color: Colors.white),
             ),

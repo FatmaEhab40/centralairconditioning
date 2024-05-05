@@ -199,7 +199,7 @@ class TableCubit extends Cubit<TableState> {
     String id = DateTime.now().microsecondsSinceEpoch.toString();
     int noOfPeople =0;
     List<int> color = [0,0,0,0];
-    final room = Rooms(name, id,noOfPeople,color);
+    final room = Rooms(name, id,noOfPeople,color,"");
     await ConstantVar.firestore
         .collection("rooms")
         .doc(id)

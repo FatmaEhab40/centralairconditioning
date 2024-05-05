@@ -181,24 +181,23 @@ List<List<List<String>>> subjects = [
 ];
 
 Future<void> getSchedule(List<List<List<String>>> s) async {
-    QuerySnapshot snapshot = await ConstantVar.firestore
-        .collection("schedule")
-        .get();
-    for (var doc in snapshot.docs) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      int index1 = data['index1'];
-      int index2 = data['index2'];
-      dynamic roomsData = List<String>.from(data['rooms']);
+  QuerySnapshot snapshot =
+      await ConstantVar.firestore.collection("schedule").get();
+  for (var doc in snapshot.docs) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    int index1 = data['index1'];
+    int index2 = data['index2'];
+    dynamic roomsData = List<String>.from(data['rooms']);
 
-      if (roomsData is String) {
-            s[index1][index2].add(roomsData);
-            s[index1][index2].removeAt(0);
-      } else if (roomsData is List<String>) {
-        for (String room in roomsData) {
-              s[index1][index2].add(room);
-        }
-        s[index1][index2].removeAt(0);
+    if (roomsData is String) {
+      s[index1][index2].add(roomsData);
+      s[index1][index2].removeAt(0);
+    } else if (roomsData is List<String>) {
+      for (String room in roomsData) {
+        s[index1][index2].add(room);
       }
+      s[index1][index2].removeAt(0);
+    }
   }
 }
 
@@ -243,12 +242,8 @@ Future<void> restartApp() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
- await Firebase.initializeApp();
+  await Firebase.initializeApp();
   await getSchedule(subjects);
-  Workmanager().initialize(
-      callbackDispatcher, // The top level function, aka callbackDispatcher
-      isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
-  );
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
@@ -269,34 +264,32 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return ResponsiveSizer(builder: (context, orientation, screenType) {
       return MaterialApp(
-          locale: DevicePreview.locale(context),
-          builder: DevicePreview.appBuilder,
-          theme: ThemeData(
-            useMaterial3: false,
-          ),
-          home: const HomeScreen(),
-          // SafeArea(
-          //   child: FutureBuilder<bool>(
-          //     future: checkInternetConnection(),
-          //     builder: (context, snapshot) {
-          //       final connectionStatus = snapshot.data;
-          //       if (connectionStatus == InternetConnectionStatus.connected) {
-          //         restartApp();
-          //       }
-          //       if (snapshot.connectionState == ConnectionState.waiting) {
-          //         return const Center(child: CircularProgressIndicator());
-          //       } else if (snapshot.hasError) {
-          //         return Center(child: Text('Error: ${snapshot.error}'));
-          //       } else {
-          //         bool connection = snapshot.data ?? false; // Access the result
-          //         return connection ? const LoginScreen() : showDialog();
-          //       }
-          //     },
-          //   ),
-          // )
-
-
-          );
+        locale: DevicePreview.locale(context),
+        builder: DevicePreview.appBuilder,
+        theme: ThemeData(
+          useMaterial3: false,
+        ),
+        home: const HomeScreen(),
+        // SafeArea(
+        //   child: FutureBuilder<bool>(
+        //     future: checkInternetConnection(),
+        //     builder: (context, snapshot) {
+        //       final connectionStatus = snapshot.data;
+        //       if (connectionStatus == InternetConnectionStatus.connected) {
+        //         restartApp();
+        //       }
+        //       if (snapshot.connectionState == ConnectionState.waiting) {
+        //         return const Center(child: CircularProgressIndicator());
+        //       } else if (snapshot.hasError) {
+        //         return Center(child: Text('Error: ${snapshot.error}'));
+        //       } else {
+        //         bool connection = snapshot.data ?? false; // Access the result
+        //         return connection ? const LoginScreen() : showDialog();
+        //       }
+        //     },
+        //   ),
+        // )
+      );
     });
   }
 }
