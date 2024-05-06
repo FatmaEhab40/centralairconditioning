@@ -1,3 +1,5 @@
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'package:centralairconditioning/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart' show Firebase;
@@ -10,18 +12,8 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:app_settings/app_settings.dart';
-import 'package:workmanager/workmanager.dart';
-import 'home/page/home_screen.dart';
 import 'login/page/login_screen.dart';
 
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) {
-    if (kDebugMode) {
-      print("Native called background task: $task");
-    } //simpleTask will be emitted here.
-    return Future.value(true);
-  });
-}
 
 List<List<List<String>>> subjects = [
   [
@@ -269,26 +261,27 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           useMaterial3: false,
         ),
-        home: const HomeScreen(),
-        // SafeArea(
-        //   child: FutureBuilder<bool>(
-        //     future: checkInternetConnection(),
-        //     builder: (context, snapshot) {
-        //       final connectionStatus = snapshot.data;
-        //       if (connectionStatus == InternetConnectionStatus.connected) {
-        //         restartApp();
-        //       }
-        //       if (snapshot.connectionState == ConnectionState.waiting) {
-        //         return const Center(child: CircularProgressIndicator());
-        //       } else if (snapshot.hasError) {
-        //         return Center(child: Text('Error: ${snapshot.error}'));
-        //       } else {
-        //         bool connection = snapshot.data ?? false; // Access the result
-        //         return connection ? const LoginScreen() : showDialog();
-        //       }
-        //     },
-        //   ),
-        // )
+        home:
+        //const HomeScreen(),
+        SafeArea(
+          child: FutureBuilder<bool>(
+            future: checkInternetConnection(),
+            builder: (context, snapshot) {
+              final connectionStatus = snapshot.data;
+              if (connectionStatus == InternetConnectionStatus.connected) {
+                restartApp();
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                bool connection = snapshot.data ?? false; // Access the result
+                return connection ? const LoginScreen() : showDialog1();
+              }
+            },
+          ),
+        )
       );
     });
   }

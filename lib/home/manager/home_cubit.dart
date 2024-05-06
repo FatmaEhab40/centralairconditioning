@@ -1,3 +1,5 @@
+// ignore_for_file: dead_code
+
 import 'package:bloc/bloc.dart';
 import 'package:centralairconditioning/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -118,7 +120,16 @@ class HomeCubit extends Cubit<HomeState> {
     final response = await http.get(Uri.parse('http://10.0.2.2:5000/api'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      rooms[0].noOfpeople = data['output'];
+
+      DocumentReference docRef = ConstantVar.firestore.collection('camera').doc("1");
+      await docRef.set({
+        "numberOfPeople": data['output'],
+      });
+      DocumentSnapshot doc = await docRef.get();
+      if (doc.exists) {
+        rooms[0].noOfpeople = (doc.data() as Map<String, dynamic>)['numberOfPeople'] as int;
+      }
+
       if (rooms[0].noOfpeople != 0 && c) {
         rooms[index].color = [90, 194, 37, 1];
         if (rooms[0].noOfpeople == 1) {
@@ -203,13 +214,13 @@ class HomeCubit extends Cubit<HomeState> {
           if (subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())][i] ==
               rooms[index].name) {
             rooms[index].inSchedule = "true";
-            print("inSchedule: ${rooms[index].inSchedule}");
+            //print("inSchedule: ${rooms[index].inSchedule}");
           }
           rooms[index].inSchedule == "false";
-          print("inSchedule: ${rooms[index].inSchedule}");
+          //print("inSchedule: ${rooms[index].inSchedule}");
         }
         rooms[index].inSchedule == "false";
-        print("inSchedule: ${rooms[index].inSchedule}");
+        //print("inSchedule: ${rooms[index].inSchedule}");
       }
   }
 }
@@ -251,30 +262,7 @@ class HomeCubit extends Cubit<HomeState> {
     return 'null';
   }
 
-  // void storeFetchedDataInFirebase(int index, rooms) {
-  //   String name = ConstantVar.roomController.text;
-  //   String id = "1709135121528823";
-  //   int noOfpeople =0;
-  //   List<int> color = [0,0,0,0];
-  //   final room = Rooms(name, id,noOfpeople,color);
-  //   await ConstantVar.firestore
-  //       .collection("rooms")
-  //       .doc(id)
-  //       .set(room.toMap())
-  //
-  //
-  //   // Prepare the data to be stored
-  //   Map<String, dynamic> roomData = {
-  //     'noOfpeople': rooms[0].noOfpeople,
-  //     'color': rooms[index].color,
-  //     'temp': rooms[index].temp,
-  //   };
-  //
-  //   // Add the data to the first document
-  //   firstRoomDocument.set(roomData).then((value) {
-  //     print('Fetched data stored in the first document in the "rooms" collection');
-  //   }).catchError((error) {
-  //     print('Error storing fetched data: $error');
-  //   });
-  // }
+  void storeFetchedDataInFirebase()async {
+
+    }
 }

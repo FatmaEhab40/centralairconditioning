@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ConstantVar.backgroundPage,
+      backgroundColor:ConstantVar.backgroundPage,
       appBar: AppBar(
         backgroundColor: ConstantVar.backgroundPage,
         iconTheme: const IconThemeData(color: ConstantVar.backgroundPage),
