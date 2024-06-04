@@ -65,6 +65,7 @@ class TableCubit extends Cubit<TableState> {
             .doc(documentId)
             .delete();
         await getPeriods();
+        toast("Done");
         emit(DeletePeriodsSuccessState());
       }else {
         emit(DeletePeriodsFailureState('No period found with this id'));
@@ -91,23 +92,14 @@ class TableCubit extends Cubit<TableState> {
   }
 
   Future<void> addPeriod()async{
-    // await addPeriodUpdate(place);
-    // for (var innerList in subjects) {
-    //   innerList.insert(place,["empty"]);
-    // }
-    // for (int i = 0 ; i < 7 ; i++){
-    //   await updateSchedule(subjects , i , place);
-    // }
     String duration = ConstantVar.periodController.text;
     String id = DateTime.now().microsecondsSinceEpoch.toString();
     final period = Periods(duration, id);
-        //, place);
     await ConstantVar.firestore
         .collection("periods")
         .doc(id)
         .set(period.toMap())
         .then((value) {
-          //periods.add(period);
       periods.insert(periods.length+1,period);
       isLoading=true;
       emit(AddPeriodsSuccessState());
@@ -116,22 +108,6 @@ class TableCubit extends Cubit<TableState> {
     });
 
   }
-  // Future<void> addPeriodUpdate(int place)async{
-  //   for (int i = 0 ; i < periods.length ; i++) {
-  //     if(periods[i].index >= place) {
-  //       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
-  //       await ConstantVar.firestore.collection("periods")
-  //           .where('index', isEqualTo: i).get();
-  //       if (querySnapshot.docs.isNotEmpty) {
-  //         final String documentId = querySnapshot.docs.first.id;
-  //         await ConstantVar.firestore.collection("periods")
-  //             .doc(documentId).update({
-  //           'index': i + 1,
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
 
   void updatePeriod(String period, String updateValue) async {
     try {
@@ -194,7 +170,7 @@ class TableCubit extends Cubit<TableState> {
     }
   }
 
-  void addRoom()async{
+  Future<void> addRoom()async{
     String name = ConstantVar.roomController.text;
     String id = DateTime.now().microsecondsSinceEpoch.toString();
     int noOfPeople =0;

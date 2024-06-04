@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models.dart';
-import '../page/profile_screen.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {

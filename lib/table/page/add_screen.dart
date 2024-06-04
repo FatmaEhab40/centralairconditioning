@@ -1,6 +1,7 @@
 import 'package:centralairconditioning/table/page/table_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import '../../models.dart';
@@ -37,6 +38,7 @@ class _AddScreenState extends State<AddScreen> {
               TextFormField(
                 controller: ConstantVar.periodController,
                 decoration: InputDecoration(
+                    hintText: " Like 01:00-23:00",
                     labelText: "Period",
                     focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
@@ -51,54 +53,29 @@ class _AddScreenState extends State<AddScreen> {
                         color: Colors.brown),
                     suffixIcon: IconButton(
                         onPressed: () async {
-                        //  setState(() {
-                           // cubit.isLoading = true;
-                         // });
                           if (ConstantVar.periodController.text.isEmpty ||
                               ConstantVar.periodController.text == ""||
                               !ConstantVar.periodController.text.contains(":")&&
-                              !ConstantVar.periodController.text.contains("-")
-                          //||
-                             // ConstantVar.indexController.text.isEmpty ||
-                             //  int.parse(ConstantVar.indexController.text) > cubit.periods.length+1||
-                             //  int.parse(ConstantVar.indexController.text) <= 0
+                                  !ConstantVar.periodController.text.contains("-")
                           ) {
                             toast("Not allowed");
                           } else {
-                            await cubit.addPeriod();
-                            cubit.isLoading = false;
-                                //int.parse(ConstantVar.indexController.text)-1);
-
+                            await showLoadingIndicator(context,cubit.addPeriod);
                             ConstantVar.periodController.clear();
-                            //ConstantVar.indexController.clear();
                           }
-                          cubit.isLoading? const CircularProgressIndicator()
-                          : toast("Done");
                         },
                         icon: const Icon(Icons.add),
                         color: Colors.brown)),
+                inputFormatters: [
+                  MaskTextInputFormatter(
+                    mask: '##:##-##:##',
+                    filter: {
+                      '#': RegExp(r'[0-9]'),
+                    },
+                  ),
+                ],
                 cursorColor: const Color(0xFF3E2723),
               ),
-              // TextFormField(
-              //   controller: ConstantVar.indexController,
-              //   keyboardType: TextInputType.number,
-              //   inputFormatters: <TextInputFormatter>[
-              //     FilteringTextInputFormatter.digitsOnly
-              //   ],
-              //   decoration: InputDecoration(
-              //     hintText: "index between 1-${cubit.periods.length+1}",
-              //     focusedBorder: OutlineInputBorder(
-              //         borderSide: BorderSide(
-              //             color: const Color(0xFF3E2723), width: 5.sp)),
-              //     hintStyle: const TextStyle(
-              //         color: Colors.brown, fontWeight: FontWeight.bold),
-              //     enabledBorder: OutlineInputBorder(
-              //       borderSide: BorderSide(
-              //           color: const Color(0xFF3E2723), width: 5.sp),
-              //     ),
-              //   ),
-              //   cursorColor: const Color(0xFF3E2723),
-              // ),
               SizedBox(height: 20.sp),
               TextFormField(
                 controller: ConstantVar.roomController,
@@ -115,12 +92,12 @@ class _AddScreenState extends State<AddScreen> {
                     ),
                     prefixIcon: const Icon(Icons.room, color: Colors.brown),
                     suffixIcon: IconButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (ConstantVar.roomController.text.isEmpty ||
                               ConstantVar.roomController.text == "") {
                             toast("Not allowed");
                           } else {
-                            cubit.addRoom();
+                            await showLoadingIndicator(context,cubit.addRoom);
                             ConstantVar.roomController.clear();
                           }
                         },

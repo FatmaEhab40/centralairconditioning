@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,6 +12,7 @@ class ConstantVar{
   static final nameController = TextEditingController();
   static final phoneController = TextEditingController();
   static final emailController = TextEditingController();
+  static final gmailController = TextEditingController();
   static final passwordController1 = TextEditingController();
   static final passwordController2 = TextEditingController();
   static  final periodController = TextEditingController();
@@ -43,19 +46,53 @@ void toast(message) {
   );
 }
 
+class User {
+  String name = "";
+  String phone = "";
+  String email = "";
+  String gmail = "";
+  String id = "";
+  String userId = "";
+
+
+  User( this.name, this.phone, this.email,this.gmail, this.id) {
+    userId = ConstantVar.auth.currentUser!.uid;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "Name": name,
+      "Phone": phone,
+      "Email": email,
+      "Gmail" :gmail,
+      "id": id,
+      "UserId": userId,
+    };
+  }
+
+  User.fromMap(Map<dynamic, dynamic> data) {
+    data['Name'];
+    data['Phone'];
+    data['Email'];
+    data['Gmail'];
+    data['id'];
+    data['UserId'];
+  }
+}
+
 class Periods {
   String duration = "";
   String id = "";
   int index = 0;
   String userId = ConstantVar.auth.currentUser!.uid;
   Periods(this.duration, this.id);
-      //,this.index);
+  //,this.index);
 
   Map<String, dynamic> toMap() {
     return {
       "duration": duration,
       "id": id,
-     // "index": index,
+      // "index": index,
       "userId": userId,
     };
   }
@@ -63,7 +100,7 @@ class Periods {
   Periods.fromMap(Map<dynamic, dynamic> data) {
     duration = data['duration'];
     id = data['id'];
-   // index = data['index'];
+    // index = data['index'];
     userId = data['userId'];
   }
 
@@ -71,7 +108,7 @@ class Periods {
     return {
       "duration": duration,
       "id": id,
-     // "index": index,
+      // "index": index,
       "userId": userId,
     };
   }
@@ -152,4 +189,59 @@ class Schedule {
 }
 
 
+
+Future<void> showLoadingIndicator(BuildContext context, Future<void> Function() asyncOperation ) async {
+  final dialogContextCompleter = Completer<BuildContext>();
+
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Prevents dialog from being dismissed by tapping outside
+    builder: (BuildContext context) {
+      if (!dialogContextCompleter.isCompleted) {
+        dialogContextCompleter.complete(context);
+      }
+      return const Center(
+        child: CircularProgressIndicator(color: Colors.brown),
+      );
+    },
+  );
+
+  final dialogContext = await dialogContextCompleter.future;
+
+  try {
+    await asyncOperation();
+  } finally {
+    if (dialogContext.mounted) {
+      Navigator.of(dialogContext).pop();
+    }
+  }
+}
+
+Future<void> showLoadingIndicatorS(BuildContext context, Future<void> Function(String a) asyncOperation) async {
+  final dialogContextCompleter = Completer<BuildContext>();
+
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Prevents dialog from being dismissed by tapping outside
+    builder: (BuildContext context) {
+      if (!dialogContextCompleter.isCompleted) {
+        dialogContextCompleter.complete(context);
+      }
+      return const Center(
+        child: CircularProgressIndicator(color: Colors.brown),
+      );
+    },
+  );
+
+  final dialogContext = await dialogContextCompleter.future;
+
+  try {
+    // Here, you should pass a string argument to asyncOperation
+    await asyncOperation("Your string argument");
+  } finally {
+    if (dialogContext.mounted) {
+      Navigator.of(dialogContext).pop();
+    }
+  }
+}
 

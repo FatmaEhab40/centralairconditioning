@@ -1,15 +1,3 @@
-// ignore_for_file: file_names
-
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../models.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
-import '../manager/forget_password_cubit.dart';
-import '../manager/forget_password_state.dart';
-import 'resetPassword_screen.dart';
-
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
 
@@ -32,7 +20,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           backgroundColor: ConstantVar.backgroundPage,
           appBar: AppBar(
             backgroundColor: ConstantVar.backgroundPage,
-              elevation: 0,
+            elevation: 0,
             iconTheme: const IconThemeData(
               color: Colors.brown,
             ),
@@ -53,10 +41,10 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 ),
                 SizedBox(height: 20.sp),
                 TextFormField(
-                    controller: ConstantVar.emailController,
+                    controller: ConstantVar.gmailController,
                     textInputAction: TextInputAction.done,
                     decoration: const InputDecoration(
-                      labelText: 'Email',
+                      labelText: 'Gmail',
                       focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Color(0xFF3E2723),
@@ -74,11 +62,12 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     cursorColor: const Color(0xFF3E2723),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return "Email is required !";
+                        return "Gmail is required !";
                       }
                       return null;
                     }
                 ),
+
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -92,8 +81,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0.sp)),
                     ),
-                    child: Text(
-                      "Reset Password",
+                    child: Text("Done",
+                      //"Reset Password",
                       style:
                       TextStyle(color: Colors.white, fontSize: 15.sp),
                     ),
@@ -108,27 +97,25 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   }
 
   void emailTrue() async {
-    String email = ConstantVar.emailController.text;
-    cubit.isEmailRegistered(email);
+    String gmail = ConstantVar.gmailController.text;
+
+    cubit.isEmailRegistered(gmail);
   }
 
-  void onEmailSuccess() {
+  Future<void> onEmailSuccess() async {
 
     Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) =>  const ResetPassword()));
+        MaterialPageRoute(builder: (context) =>  const LoginScreen()));
   }
 
   void onStatChange(state) {
     if (state is ForgetPasswordSuccessState) {
       onEmailSuccess();
-      toast("Email is found");
+
     } else if (state is ForgetPasswordFailureState) {
       toast(state.errorMessage);
     }
   }
 
 }
-
-
-

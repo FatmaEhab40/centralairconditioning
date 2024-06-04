@@ -135,12 +135,14 @@ class _EditScreenState extends State<EditScreen> {
                           String selectedValue =
                               periodController.dropDownValue!.name;
                           dialogPeriodBuilder(context, selectedValue);
+
                         }
-                         if (roomController.dropDownValue != null &&
+                        if (roomController.dropDownValue != null &&
                             roomController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               roomController.dropDownValue!.name;
                           dialogRoomBuilder(context, selectedValue);
+
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -216,7 +218,7 @@ class _EditScreenState extends State<EditScreen> {
                     color: Colors.brown, fontWeight: FontWeight.bold),
                 enabledBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: const Color(0xFF3E2723), width: 5.sp),
+                  BorderSide(color: const Color(0xFF3E2723), width: 5.sp),
                 ),
               ),
               cursorColor: const Color(0xFF3E2723),
@@ -224,50 +226,52 @@ class _EditScreenState extends State<EditScreen> {
             actions: [
               Center(
                   child: Column(
-                children: [
-                  SizedBox(
-                    width: 50.sp,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        String period = ConstantVar.periodController.text;
-                        cubit.updatePeriod(selectedValue, period);
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 5.0.sp, vertical: 5.0.sp),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0.sp)),
+                    children: [
+                      SizedBox(
+                        width: 50.sp,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            String period = ConstantVar.periodController.text;
+                            await showLoadingIndicatorS(context, (s) async {
+                              cubit.updatePeriod(selectedValue, period);
+                            });
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.brown,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5.0.sp, vertical: 5.0.sp),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0.sp)),
+                          ),
+                          child: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                          ),
+                        ),
                       ),
-                      child: Text(
-                        "Save",
-                        style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                      SizedBox(height: 5.sp),
+                      SizedBox(
+                        width: 50.sp,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.brown,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5.0.sp, vertical: 5.0.sp),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0.sp)),
+                          ),
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 5.sp),
-                  SizedBox(
-                    width: 50.sp,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 5.0.sp, vertical: 5.0.sp),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0.sp)),
-                      ),
-                      child: Text(
-                        "Cancel",
-                        style: TextStyle(color: Colors.white, fontSize: 15.sp),
-                      ),
-                    ),
-                  ),
-                ],
-              )),
+                    ],
+                  )),
             ],
           );
         });
@@ -300,7 +304,7 @@ class _EditScreenState extends State<EditScreen> {
                     color: Colors.brown, fontWeight: FontWeight.bold),
                 enabledBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: const Color(0xFF3E2723), width: 5.sp),
+                  BorderSide(color: const Color(0xFF3E2723), width: 5.sp),
                 ),
               ),
               cursorColor: const Color(0xFF3E2723),
@@ -308,52 +312,57 @@ class _EditScreenState extends State<EditScreen> {
             actions: [
               Center(
                   child: Column(
-                children: [
-                  SizedBox(
-                    width: 50.sp,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        String room = ConstantVar.roomController.text;
-                        cubit.updateRoom(selectedValue, room);
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 5.0.sp, vertical: 5.0.sp),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0.sp)),
+                    children: [
+                      SizedBox(
+                        width: 50.sp,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            String room = ConstantVar.roomController.text;
+                            await showLoadingIndicatorS(context, (s) async {
+                              cubit.updateRoom(selectedValue, room);
+                            });
+                            ConstantVar.roomController.clear();
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.brown,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5.0.sp, vertical: 5.0.sp),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0.sp)),
+                          ),
+                          child: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                          ),
+                        ),
                       ),
-                      child: Text(
-                        "Save",
-                        style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                      SizedBox(height: 5.sp),
+                      SizedBox(
+                        width: 50.sp,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.brown,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5.0.sp, vertical: 5.0.sp),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0.sp)),
+                          ),
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 5.sp),
-                  SizedBox(
-                    width: 50.sp,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 5.0.sp, vertical: 5.0.sp),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0.sp)),
-                      ),
-                      child: Text(
-                        "Cancel",
-                        style: TextStyle(color: Colors.white, fontSize: 15.sp),
-                      ),
-                    ),
-                  ),
-                ],
-              )),
+                    ],
+                  )),
             ],
           );
         });
   }
 }
+
+

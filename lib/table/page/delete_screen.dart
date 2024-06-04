@@ -130,20 +130,37 @@ class _DeleteScreenState extends State<DeleteScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (roomController.dropDownValue != null &&
+                        if(roomController.dropDownValue != null &&
+                            roomController.dropDownValue!.name.isNotEmpty&&
+                            periodController.dropDownValue != null &&
+                            periodController.dropDownValue!.name.isNotEmpty){
+                          String selectedValue1 =
+                              roomController.dropDownValue!.name,
+                              selectedValue2 =
+                                  periodController.dropDownValue!.name;
+                          await showLoadingIndicatorS(context, (s) async {
+                            await cubit.deleteRoom(selectedValue1);
+                            await cubit.deletePeriod(selectedValue2);
+                          });
+                        }
+                        else if (roomController.dropDownValue != null &&
                             roomController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               roomController.dropDownValue!.name;
                           //print(selectedValue);
-                          await cubit.deleteRoom(selectedValue);
+                          await showLoadingIndicatorS(context, (s) async {
+                            await cubit.deleteRoom(selectedValue);
+                          });
                         }
                         else if (periodController.dropDownValue != null &&
                             periodController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               periodController.dropDownValue!.name;
-                          await cubit.deletePeriod(selectedValue);
+                          await showLoadingIndicatorS(context, (s) async {
+                            await cubit.deletePeriod(selectedValue);
+                          });
                         }
-                        toast("Done");
+
                         ConstantVar.periodController.clear();
                         ConstantVar.roomController.clear();
                       },

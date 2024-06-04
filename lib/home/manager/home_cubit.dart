@@ -12,7 +12,7 @@ import 'dart:async';
 
 List<Rooms> rooms = [];
 List<Periods> periods = [];
-
+int a=0;int b=0;
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitial());
 
@@ -114,10 +114,73 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+  Future<void> setData() async {
+    bool c = await there(0);
+
+
+    DocumentReference docRef = ConstantVar.firestore.collection('camera').doc("1");
+    DocumentSnapshot doc = await docRef.get();
+    if (doc.exists) {
+      rooms[0].noOfpeople = (doc.data() as Map<String, dynamic>)['numberOfPeople'] as int;
+      a = rooms[0].noOfpeople;
+    }
+
+    if (rooms[0].noOfpeople != 0 && c) {
+      rooms[0].color = [90, 194, 37, 1];
+      if (rooms[0].noOfpeople == 1) {
+        rooms[0].temp = 26;
+      }
+      else if (rooms[0].noOfpeople == 2) {
+        rooms[0].temp = 25;
+      }
+      else if (rooms[0].noOfpeople == 3) {
+        rooms[0].temp = 24;
+      }
+      else if (rooms[0].noOfpeople == 4) {
+        rooms[0].temp = 23;
+      }
+      else if (rooms[0].noOfpeople == 5) {
+        rooms[0].temp = 22;
+      }
+    }
+    else if (rooms[0].noOfpeople != 0 && !c) {
+      rooms[0].color = [90, 194, 37, 1];
+      if (rooms[0].noOfpeople == 1) {
+        rooms[0].temp = 26;
+      }
+      else if (rooms[0].noOfpeople == 2) {
+        rooms[0].temp = 25;
+      }
+      else if (rooms[0].noOfpeople == 3) {
+        rooms[0].temp = 24;
+      }
+      else if (rooms[0].noOfpeople == 4) {
+        rooms[0].temp = 23;
+      }
+      else if (rooms[0].noOfpeople == 5) {
+        rooms[0].temp = 22;
+      }
+    }
+    else if (rooms[0].noOfpeople == 0 && c) {
+      rooms[0].color = [255, 216, 0, 1];
+      rooms[0].temp = 0;
+    }
+    else if (rooms[0].noOfpeople == 0 && !c) { //16:00-8:00
+      rooms[0].color = [171, 0, 0, 1];
+      rooms[0].temp = 0;
+    }
+    b=a;
+    emit(Reload());
+    Future.delayed(const Duration(seconds: 5), () {
+      setData();
+    });
+
+  }
+
+
 
   Future<void> fetchData(int index) async {
-    bool c = await there(index);
-    final response = await http.get(Uri.parse('http://10.0.2.2:5000/api'));
+    var response = await http.get(Uri.parse('http://10.0.2.2:5000/api'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
 
@@ -125,55 +188,7 @@ class HomeCubit extends Cubit<HomeState> {
       await docRef.set({
         "numberOfPeople": data['output'],
       });
-      DocumentSnapshot doc = await docRef.get();
-      if (doc.exists) {
-        rooms[0].noOfpeople = (doc.data() as Map<String, dynamic>)['numberOfPeople'] as int;
-      }
 
-      if (rooms[0].noOfpeople != 0 && c) {
-        rooms[index].color = [90, 194, 37, 1];
-        if (rooms[0].noOfpeople == 1) {
-          rooms[index].temp = 26;
-        }
-        else if (rooms[0].noOfpeople == 2) {
-          rooms[index].temp = 25;
-        }
-        else if (rooms[0].noOfpeople == 3) {
-          rooms[index].temp = 24;
-        }
-        else if (rooms[0].noOfpeople == 4) {
-          rooms[index].temp = 23;
-        }
-        else if (rooms[0].noOfpeople == 5) {
-          rooms[index].temp = 22;
-        }
-      }
-      else if (rooms[0].noOfpeople != 0 && !c) {
-        rooms[index].color = [90, 194, 37, 1];
-        if (rooms[0].noOfpeople == 1) {
-          rooms[index].temp = 26;
-        }
-        else if (rooms[0].noOfpeople == 2) {
-          rooms[index].temp = 25;
-        }
-        else if (rooms[0].noOfpeople == 3) {
-          rooms[index].temp = 24;
-        }
-        else if (rooms[0].noOfpeople == 4) {
-          rooms[index].temp = 23;
-        }
-        else if (rooms[0].noOfpeople == 5) {
-          rooms[index].temp = 22;
-        }
-      }
-      else if (rooms[0].noOfpeople == 0 && c) {
-        rooms[index].color = [255, 216, 0, 1];
-        rooms[index].temp = 0;
-      }
-      else if (rooms[0].noOfpeople == 0 && !c) { //16:00-8:00
-        rooms[index].color = [171, 0, 0, 1];
-        rooms[index].temp = 0;
-      }
 
       emit(Reload());
       Future.delayed(const Duration(seconds: 5), () {
@@ -186,8 +201,9 @@ class HomeCubit extends Cubit<HomeState> {
     //   });
     // }
     else {
-      emit(ReloadFailure('Failed to load data'));
-      throw Exception('Failed to load data');
+      Future.delayed(const Duration(seconds: 5), () {
+        fetchData(index);
+      });
     }
   }
 
@@ -207,23 +223,29 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> checkSchedule() async {
-    for (int index = 1; index < rooms.length; index++) {
+    for (int index = 0; index < rooms.length; index++) {
       if (currentPeriod() != 'null') {
-        for (int i = 0; i < subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())].length; i++)
-        {
-          if (subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())][i] ==
-              rooms[index].name) {
+        bool foundInSchedule = false; // Track if the room is in the schedule
+        for (int i = 0; i < subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())].length; i++) {
+          if (subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())][i] == rooms[index].name) {
             rooms[index].inSchedule = "true";
-            //print("inSchedule: ${rooms[index].inSchedule}");
+            foundInSchedule = true;
+            emit(Reload());
+            break; // Exit the loop as we found the room in the schedule
           }
-          rooms[index].inSchedule == "false";
-          //print("inSchedule: ${rooms[index].inSchedule}");
         }
-        rooms[index].inSchedule == "false";
-        //print("inSchedule: ${rooms[index].inSchedule}");
+
+        if (!foundInSchedule) {
+
+          rooms[index].inSchedule = "false";
+          emit(Reload());
+        }
       }
+    }
   }
-}
+
+
+  
   int getCurrentDayOfWeek() {
     List<int> daysOfWeek = [2, 3, 4, 5, 6, 0, 1];
     DateTime currentTime = DateTime.now();
@@ -262,7 +284,5 @@ class HomeCubit extends Cubit<HomeState> {
     return 'null';
   }
 
-  void storeFetchedDataInFirebase()async {
 
-    }
 }

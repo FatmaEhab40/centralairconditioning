@@ -7,35 +7,7 @@ import '../../models.dart';
 import '../manager/profile_cubit.dart';
 import '../manager/profile_state.dart';
 
-class User {
-  String name = "";
-  String phone = "";
-  String email = "";
-  String id = "";
-  String userId = "";
 
-  User( this.name, this.phone, this.email, this.id) {
-    userId = ConstantVar.auth.currentUser!.uid;
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      "Name": name,
-      "Phone": phone,
-      "Email": email,
-      "id": id,
-      "UserId": userId,
-    };
-  }
-
-  User.fromMap(Map<dynamic, dynamic> data) {
-    data['Name'];
-    data['Phone'];
-    data['Email'];
-    data['id'];
-    data['UserId'];
-  }
-}
 
 final cubit = ProfileCubit();
 
@@ -129,6 +101,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         cursorColor: const Color(0xFF3E2723),
                       ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                          controller: ConstantVar.emailController,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                            labelText: 'Academic email',
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: const Color(0xFF3E2723), width: 5.sp)),
+                            labelStyle: const TextStyle(
+                                color: Colors.brown, fontWeight: FontWeight.bold),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: const Color(0xFF3E2723), width: 5.sp),
+                            ),
+                            prefixIcon:
+                            const Icon(Icons.email, color: Colors.brown),
+                          ),
+                          cursorColor: const Color(0xFF3E2723),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Academic email is required !";
+
+                            }
+                            if (!value.contains("@")||
+                                !value.contains("o6u")||
+                                !value.contains(".")||
+                                !value.contains("edu")||
+                                !value.contains(".")||
+                                !value.contains("eg")
+                            ) {
+                              return "Academic email is wrong !";
+                            }
+                            return null;
+                          }),
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: ConstantVar.emailController,

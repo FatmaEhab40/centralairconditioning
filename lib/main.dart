@@ -1,12 +1,10 @@
 // ignore_for_file: unrelated_type_equality_checks
-
 import 'package:centralairconditioning/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -193,6 +191,7 @@ Future<void> getSchedule(List<List<List<String>>> s) async {
   }
 }
 
+
 Future<bool> checkInternetConnection() async {
   bool hasConnection = await InternetConnectionChecker().hasConnection;
   if (hasConnection) {
@@ -228,14 +227,11 @@ Widget showDialog1() {
   );
 }
 
-Future<void> restartApp() async {
-  await SystemChannels.platform.invokeMethod('restartApp');
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await getSchedule(subjects);
+
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
@@ -261,27 +257,22 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           useMaterial3: false,
         ),
-        home:
-        //const HomeScreen(),
-        SafeArea(
-          child: FutureBuilder<bool>(
-            future: checkInternetConnection(),
-            builder: (context, snapshot) {
-              final connectionStatus = snapshot.data;
-              if (connectionStatus == InternetConnectionStatus.connected) {
-                restartApp();
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+        home:  FutureBuilder(
+          future: checkInternetConnection(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!) {
+                return const LoginScreen();
               } else {
-                bool connection = snapshot.data ?? false; // Access the result
-                return connection ? const LoginScreen() : showDialog1();
+                return showDialog1(); // This should be a route, not a widget
               }
-            },
-          ),
-        )
+            }
+            else {
+              return const Center(child: CircularProgressIndicator(color: Colors.brown));
+            }
+          },
+        ),
+
       );
     });
   }

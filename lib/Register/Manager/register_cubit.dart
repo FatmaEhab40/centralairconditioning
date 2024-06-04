@@ -10,16 +10,17 @@ class RegisterCubit extends Cubit<RegisterState> {
 
 
   void createAccount(
-      {required String email,
+      { required String gmail,
+        required String email,
         required String password,
         required String phone,
         required String name}
       )async {
     try {
       await ConstantVar.auth.createUserWithEmailAndPassword(
-          email: email,
+          email: gmail,
           password: password);
-      await saveUserData(email: email,phone: phone,name:name);
+      await saveUserData(gmail:gmail,email: email,phone: phone,name:name);
       emit(RegisterSuccessState());
 
     } on FirebaseAuthException catch (e) {
@@ -38,14 +39,16 @@ class RegisterCubit extends Cubit<RegisterState> {
     required String name,
     required String phone,
     required String email,
+    required String gmail,
+
   })async {
     final userId=ConstantVar.auth.currentUser!.uid;
     await ConstantVar.firestore.collection("users").doc(userId).set({
       "Name":name,
       "email":email,
+      "gmail":gmail,
       "phone":phone,
-      "userId":userId,
-      "image":"",
+      "userId":userId
 
     }).onError((e, _) => print("Error writing document: $e"));
   }

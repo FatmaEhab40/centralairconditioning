@@ -314,7 +314,7 @@ class _TableScreenState extends State<TableScreen> {
                                                                       borderRadius: BorderRadius.all(Radius.circular(30))),
                                                                   content: DropDownMultiSelect<String>(
                                                                     selectedValues: selectedRooms,
-                                                                    selected_values_style:
+                                                                    selectedValuesStyle:
                                                                     const TextStyle(
                                                                         color: Colors.brown),
                                                                     onChanged: (List<String> newValue2){

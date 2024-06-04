@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,8 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
     cubit.getPeriods();
     cubit.getRooms();
     Future.delayed(const Duration(seconds: 5), () {
+    cubit.checkSchedule();
+    });
+    Future.delayed(const Duration(seconds: 5), () {
+      cubit.setData();
       cubit.fetchData(0);
-      cubit.checkSchedule();
+
     });
   }
   @override
@@ -51,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor:ConstantVar.backgroundPage,
       appBar: AppBar(
         backgroundColor: ConstantVar.backgroundPage,
+        
         iconTheme: const IconThemeData(color: ConstantVar.backgroundPage),
         title: GradientText(
           'Home',
@@ -166,9 +170,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.w500, color: Colors.white),
             ),
             SizedBox(height: 10.sp),
-            CachedNetworkImage(
-              imageUrl:
-              "https://www.sisaairconditioning.com.au/wp-content/uploads/2021/12/Ducted-Air-Conditioning-Adelaide.png",
+            Image.asset(
+              "assets/Container_background.png",
+              // imageUrl:
+              // "https://www.sisaairconditioning.com.au/wp-content/uploads/2021/12/Ducted-Air-Conditioning-Adelaide.png",
               width: 51.sp,
             ),
             SizedBox(height: 10.sp),

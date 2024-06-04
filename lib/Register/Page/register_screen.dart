@@ -32,11 +32,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           return Scaffold(
             backgroundColor: ConstantVar.backgroundPage,
             appBar: AppBar(
-              backgroundColor: ConstantVar.backgroundPage,
+                backgroundColor: ConstantVar.backgroundPage,
                 elevation: 0,
-              iconTheme: const IconThemeData(
-                color: Colors.brown,
-              )
+                iconTheme: const IconThemeData(
+                  color: Colors.brown,
+                )
             ),
             body: Form(
               key: ConstantVar.formKey,
@@ -115,7 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: ConstantVar.emailController,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
-                              labelText: 'Email',
+                              labelText: 'Academic email',
                               focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                       color: const Color(0xFF3E2723), width: 5.sp)),
@@ -131,7 +131,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             cursorColor: const Color(0xFF3E2723),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return "Email is required !";
+                                return "Academic email is required !";
 
                               }
                               if (!value.contains("@")||
@@ -140,11 +140,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   !value.contains("edu")||
                                   !value.contains(".")||
                                   !value.contains("eg")
-                                  ) {
-                                return "Email is wrong !";
+                              ) {
+                                return "Academic email is wrong !";
                               }
                               return null;
                             }),
+                        SizedBox(height: 15.sp),
+                        TextFormField(
+                            controller: ConstantVar.gmailController,
+                            textInputAction: TextInputAction.done,
+                            decoration: const InputDecoration(
+                              labelText: 'Gmail',
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0xFF3E2723),
+                                    width: 2,
+                                  )),
+                              labelStyle: TextStyle(
+                                  color: Colors.brown,
+                                  fontWeight: FontWeight.bold),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color(0xFF3E2723), width: 2),
+                              ),
+                              prefixIcon: Icon(Icons.email, color: Colors.brown),
+                            ),
+                            cursorColor: const Color(0xFF3E2723),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Gmail is required !";
+                              }
+                              if (value.contains("@")||
+                                  value.contains("gmail")||
+                                  value.contains(".")||
+                                  value.contains("com")){
+                                return "Gmail is wrong !";
+                              }
+                              return null;
+                            }
+                        ),
                         SizedBox(height: 15.sp),
                         TextFormField(
                             controller: ConstantVar.passwordController1,
@@ -225,11 +259,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void register()  {
+    String gmail = ConstantVar.gmailController.text;
     String email = ConstantVar.emailController.text;
     String password = ConstantVar.passwordController1.text;
     String phone = ConstantVar.phoneController.text;
     String name = ConstantVar.nameController.text;
     cubit.createAccount(
+        gmail:gmail,
         email:email,
         password:password,
         phone:phone,
