@@ -12,7 +12,6 @@ import '../manager/home_cubit.dart';
 import '../manager/home_state.dart';
 import 'dart:async';
 
-
 final cubit = HomeCubit();
 
 class HomeScreen extends StatefulWidget {
@@ -23,23 +22,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void refresh() {
-    setState(() {
-      // Trigger a rebuild of the screen
-    });
-  }
+  // void refresh() {
+  //   setState(() {
+  //     // Trigger a rebuild of the screen
+  //   });
+  // }
+
   @override
   void initState() {
     super.initState();
-    cubit.getPeriods();
-    cubit.getRooms();
     Future.delayed(const Duration(seconds: 5), () {
-    cubit.checkSchedule();
+      cubit.checkSchedule();
     });
     Future.delayed(const Duration(seconds: 5), () {
       cubit.setData();
       cubit.fetchData(0);
-
     });
   }
   @override
@@ -54,8 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor:ConstantVar.backgroundPage,
       appBar: AppBar(
         backgroundColor: ConstantVar.backgroundPage,
-        
-        iconTheme: const IconThemeData(color: ConstantVar.backgroundPage),
+        //iconTheme: const IconThemeData(color: ConstantVar.backgroundPage),
         title: GradientText(
           'Home',
           style: GoogleFonts.eagleLake(fontSize: 20.sp),
@@ -81,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: GoogleFonts.eagleLake(fontSize: 17.sp),
                 colors: ConstantVar.gradientList),
           ),
-          SizedBox(width: 20.sp),
+          SizedBox(width: 15.sp),
           ShaderMask(
             shaderCallback: (Rect bounds) {
               return LinearGradient(
@@ -101,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.person),
             ),
           ),
-          SizedBox(width: 20.sp),
+          SizedBox(width: 15.sp),
           ShaderMask(
             shaderCallback: (Rect bounds) {
               return LinearGradient(

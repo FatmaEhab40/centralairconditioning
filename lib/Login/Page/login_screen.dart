@@ -18,7 +18,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final cubit = LoginCubit();
+  final cubitLogin = LoginCubit();
   @override
   void initState() {
     super.initState();
@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => cubitLogin,
       child: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {onStatChange(state);},
         builder: (context, state) {
@@ -38,15 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     opacity: 0.9.sign,
                     child: Image.asset(
                       "assets/background.png",
-                      // imageUrl:
-                      // "https://www.lg.com/eg_en/images/business/indoor-ceiling-concealed-duct/Ceiling-Concealed-Duct-02-Mobile.jpg",
                       fit: BoxFit.fill,
                       width: double.infinity,
                       height: double.infinity,
                     ),
                   ),
                   SingleChildScrollView(
-                    child: Container(
+                    child:
+                    Container(
                       margin: EdgeInsets.all(20.sp),
                       padding: EdgeInsets.all(10.sp),
                       height: 250.sp,
@@ -200,16 +199,38 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login() async {
     String email = ConstantVar.emailController.text;
     String password = ConstantVar.passwordController1.text;
-        cubit.login(email: email, password: password);
+        cubitLogin.login(email: email, password: password);
 
   }
 
   void onLoginSuccess() {
-    Navigator.pushReplacement(
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => const HomeScreen(),
+    //   ),
+    // );
+
+    Widget showLoadingIndicatorList(BuildContext context, List<Future<void> Function()> asyncOperations) {
+      return FutureBuilder(
+        future: Future.wait(asyncOperations.map((e) => e())),
+        builder: (BuildContext context, AsyncSnapshot snap) {
+          if (snap.connectionState != ConnectionState.waiting) {
+            return const HomeScreen();
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.brown),
+            );
+          }
+        },
+      );
+    }
+
+    Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => showLoadingIndicatorList(context,
+          [cubit.checkSchedule, cubit.setData,cubit.getPeriods, cubit.getRooms ])),
+          (Route<dynamic> route) => false,
     );
   }
 
