@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -116,7 +115,7 @@ class Periods {
 
 class Rooms {
   String name = "";
-  String inSchedule ="";
+  String inSchedule ="Loading";
   int noOfpeople=0;
   String id = "";
   int temp = 0 ;
@@ -245,40 +244,19 @@ Future<void> showLoadingIndicatorS(BuildContext context, Future<void> Function(S
   }
 }
 
-Future<void> showLoadingIndicatorList(BuildContext context,  List <Future<void> Function()> asyncOperations ) async {
-  // final dialogContextCompleter = Completer<BuildContext>();
-  //
-  // showDialog(
-  //   context: context,
-  //   barrierDismissible: false, // Prevents dialog from being dismissed by tapping outside
-  //   builder: (BuildContext context) {
-  //     if (!dialogContextCompleter.isCompleted) {
-  //       dialogContextCompleter.complete(context);
-  //     }
-  //     return const Center(
-  //       child: CircularProgressIndicator(color: Colors.brown),
-  //     );
-  //   },
-  // );
-  //
-  // final dialogContext = await dialogContextCompleter.future;
-  //
-  // try {
-  //   await Future.wait(asyncOperations.map((e) => e()));
-  // } finally {
-  //   if (dialogContext.mounted) {
-  //     Navigator.of(dialogContext).pop();
-  //   }
-  // }
-  FutureBuilder(
-      future: Future.wait(asyncOperations.map((e) => e())),
-      builder: (BuildContext context, AsyncSnapshot snap) {
-        if (snap.connectionState != ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: Colors.brown),
-          );
-        } else {
-          return Center(child: CircularProgressIndicator());
-        }
-      });
-}
+// Widget showLoadingIndicatorListHome(BuildContext context, List<Future<void> Function()> asyncOperations) {
+//   return FutureBuilder(
+//     future: Future.wait(asyncOperations.map((e) => e())),
+//     builder: (BuildContext context, AsyncSnapshot snap) {
+//       if (snap.connectionState != ConnectionState.waiting) {
+//         return const HomeScreen() ;
+//       } else {
+//         return const Center(
+//           child: CircularProgressIndicator(color: Colors.brown),
+//         );
+//       }
+//     },
+//   );
+// }
+
+

@@ -9,7 +9,7 @@ import '../manager/profile_state.dart';
 
 
 
-final cubit = ProfileCubit();
+final cubitProfile = ProfileCubit();
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -21,9 +21,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
-  void initState() {
+ void initState()  {
     super.initState();
-    cubit.getUserData();
+
   }
 
   @override
@@ -44,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             )
         ),
         body: BlocProvider(
-          create: (context) => cubit,
+          create: (context) => cubitProfile,
           child: BlocBuilder<ProfileCubit, ProfileState>(
             buildWhen: (previous, current) {
               return current is GetUsersSuccessState||
@@ -103,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
-                          controller: ConstantVar.emailController,
+                          controller: ConstantVar.gmailController,
                           textInputAction: TextInputAction.next,
                           decoration: InputDecoration(
                             labelText: 'Academic email',
@@ -125,11 +125,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               return "Academic email is required !";
 
                             }
-                            if (!value.contains("@")||
-                                !value.contains("o6u")||
-                                !value.contains(".")||
-                                !value.contains("edu")||
-                                !value.contains(".")||
+                            if (!value.contains("@")&&
+                                !value.contains("o6u")&&
+                                !value.contains(".")&&
+                                !value.contains("edu")&&
+                                !value.contains(".")&&
                                 !value.contains("eg")
                             ) {
                               return "Academic email is wrong !";
@@ -165,8 +165,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         width: double.infinity,
                         child: OutlinedButton(
                           onPressed: () {
-                            cubit.updateUserData();
-                            cubit.getUserData();
+                            cubitProfile.updateUserData();
+                            cubitProfile.getUserData();
                           },
                           style: OutlinedButton.styleFrom(
                               shape: const StadiumBorder(),

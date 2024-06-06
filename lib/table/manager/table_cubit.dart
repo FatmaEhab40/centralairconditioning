@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:centralairconditioning/main.dart';
 import 'package:centralairconditioning/table/manager/table_state.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../../models.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TableCubit extends Cubit<TableState> {
   TableCubit() : super(TableInitial());
@@ -74,6 +74,7 @@ class TableCubit extends Cubit<TableState> {
       emit(DeletePeriodsFailureState(e.toString()));
     }
   }
+
   Future<void> deletePeriodUpdate(int place)async{
     for (int i = 0 ; i < periods.length ; i++) {
       if(periods[i].index > place) {
@@ -106,7 +107,6 @@ class TableCubit extends Cubit<TableState> {
     }).catchError((error){
       emit(AddPeriodsFailureState("Error when add"));
     });
-
   }
 
   void updatePeriod(String period, String updateValue) async {
@@ -129,6 +129,7 @@ class TableCubit extends Cubit<TableState> {
     } catch (e) {
       emit(UpdatePeriodsFailureState(e.toString()));
     }
+
   }
 
   void getRooms() {
@@ -243,5 +244,6 @@ class TableCubit extends Cubit<TableState> {
 
 
   }
+
 
 }

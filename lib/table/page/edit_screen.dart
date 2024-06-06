@@ -9,12 +9,12 @@ import '../../models.dart';
 import '../manager/table_cubit.dart';
 import '../manager/table_state.dart';
 
-List<DropDownValueModel> dropDownListPeriods = cubit.periods
+List<DropDownValueModel> dropDownListPeriods = cubitTable.periods
     .map(
         (period) => DropDownValueModel(name: period.duration, value: period.id))
     .toList();
 
-List<DropDownValueModel> dropDownListRooms = cubit.rooms
+List<DropDownValueModel> dropDownListRooms = cubitTable.rooms
     .map((room) => DropDownValueModel(name: room.name, value: room.id))
     .toList();
 
@@ -32,10 +32,12 @@ class _EditScreenState extends State<EditScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => cubitTable,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
-          return current is Reload;
+          return current is Reload||
+              current is UpdatePeriodsSuccessState||
+              current is UpdateRoomsSuccessState;
         },
         builder: (context, state) {
           return Scaffold(
@@ -86,7 +88,7 @@ class _EditScreenState extends State<EditScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubit.periods.length,
+                    dropDownItemCount: cubitTable.periods.length,
                     dropDownList: dropDownListPeriods,
                     onChanged: (value) {},
                   ),
@@ -121,7 +123,7 @@ class _EditScreenState extends State<EditScreen> {
                     ),
                     listTextStyle: TextStyle(fontSize: 20.sp),
                     textStyle: TextStyle(fontSize: 20.sp),
-                    dropDownItemCount: cubit.rooms.length,
+                    dropDownItemCount: cubitTable.rooms.length,
                     dropDownList: dropDownListRooms,
                     onChanged: (value) {},
                   ),
@@ -134,6 +136,7 @@ class _EditScreenState extends State<EditScreen> {
                             periodController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               periodController.dropDownValue!.name;
+                          ConstantVar.periodController.clear();
                           dialogPeriodBuilder(context, selectedValue);
 
                         }
@@ -141,6 +144,7 @@ class _EditScreenState extends State<EditScreen> {
                             roomController.dropDownValue!.name.isNotEmpty) {
                           String selectedValue =
                               roomController.dropDownValue!.name;
+                          ConstantVar.roomController.clear();
                           dialogRoomBuilder(context, selectedValue);
 
                         }
@@ -233,7 +237,7 @@ class _EditScreenState extends State<EditScreen> {
                           onPressed: () async {
                             String period = ConstantVar.periodController.text;
                             await showLoadingIndicatorS(context, (s) async {
-                              cubit.updatePeriod(selectedValue, period);
+                              cubitTable.updatePeriod(selectedValue, period);
                             });
                             Navigator.pop(context);
                           },
@@ -319,7 +323,7 @@ class _EditScreenState extends State<EditScreen> {
                           onPressed: () async {
                             String room = ConstantVar.roomController.text;
                             await showLoadingIndicatorS(context, (s) async {
-                              cubit.updateRoom(selectedValue, room);
+                              cubitTable.updateRoom(selectedValue, room);
                             });
                             ConstantVar.roomController.clear();
                             Navigator.pop(context);

@@ -134,11 +134,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 return "Academic email is required !";
 
                               }
-                              if (!value.contains("@")||
-                                  !value.contains("o6u")||
-                                  !value.contains(".")||
-                                  !value.contains("edu")||
-                                  !value.contains(".")||
+                              if (!value.contains("@")&&
+                                  !value.contains("o6u")&&
+                                  !value.contains(".")&&
+                                  !value.contains("edu")&&
+                                  !value.contains(".")&&
                                   !value.contains("eg")
                               ) {
                                 return "Academic email is wrong !";
@@ -170,9 +170,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               if (value!.isEmpty) {
                                 return "Gmail is required !";
                               }
-                              if (value.contains("@")||
-                                  value.contains("gmail")||
-                                  value.contains(".")||
+                              if (value.contains("@")&&
+                                  value.contains("gmail")&&
+                                  value.contains(".")&&
                                   value.contains("com")){
                                 return "Gmail is wrong !";
                               }
@@ -216,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               if (value!.isEmpty) {
                                 return "Password is required !";
                               }
-                              else if (value.length<10 &&
+                              else if (value.length>=10 &&
                                   !value.contains("@")||
                                   !value.contains("_")) {
                                 return "Password is weak !";

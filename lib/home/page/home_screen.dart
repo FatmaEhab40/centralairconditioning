@@ -22,21 +22,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // void refresh() {
-  //   setState(() {
-  //     // Trigger a rebuild of the screen
-  //   });
-  // }
 
   @override
   void initState() {
     super.initState();
+    cubit.getPeriods();
+    cubit.getRooms();
     Future.delayed(const Duration(seconds: 5), () {
       cubit.checkSchedule();
     });
     Future.delayed(const Duration(seconds: 5), () {
       cubit.setData();
       cubit.fetchData(0);
+
     });
   }
   @override
@@ -61,11 +59,12 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TableScreen(),
-                  ));
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const TableScreen()),
+                    (Route<dynamic> route) => false,
+              );
+
             },
             style: ElevatedButton.styleFrom(
                 padding:
@@ -90,9 +89,22 @@ class _HomeScreenState extends State<HomeScreen> {
               iconSize: 20.sp,
               onPressed: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ProfileScreen()));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FutureBuilder(
+                      future: cubitProfile.getUserData(), // Call the function and pass the returned Future
+                      builder: (BuildContext context, AsyncSnapshot snap) {
+                        if (snap.connectionState!= ConnectionState.waiting) {
+                          return const ProfileScreen();
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(color: Colors.brown),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                );
               },
               icon: const Icon(Icons.person),
             ),

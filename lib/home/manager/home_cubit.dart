@@ -16,7 +16,7 @@ int a=0;int b=0;
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitial());
 
-  Future<void>  getPeriods() async {
+  void getPeriods() {
     ConstantVar.firestore.collection("periods").get().then((value) {
       periods.clear();
       for (var document in value.docs) {
@@ -29,7 +29,7 @@ class HomeCubit extends Cubit<HomeState> {
     });
   }
 
-  Future<void>  getRooms() async {
+  void getRooms() {
     ConstantVar.firestore.collection("rooms").get().then((value) {
       rooms.clear();
       for (var document in value.docs) {
@@ -243,20 +243,9 @@ class HomeCubit extends Cubit<HomeState> {
       }
     }
   }
-  // Future<void> checkSchedule() async {
-  //   if (currentPeriod()!= 'null') {
-  //     for (int index = 0; index < rooms.length; index++) {
-  //       final roomName = rooms[index].name;
-  //       final isInSchedule = subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())].any((subject) => subject == roomName);
-  //       if (rooms[index].inSchedule!= isInSchedule.toString()) {
-  //         rooms[index].inSchedule = isInSchedule.toString();
-  //         emit(Reload());
-  //       }
-  //     }
-  //   }
-  // }
 
-  
+
+
   int getCurrentDayOfWeek() {
     List<int> daysOfWeek = [2, 3, 4, 5, 6, 0, 1];
     DateTime currentTime = DateTime.now();
@@ -282,8 +271,8 @@ class HomeCubit extends Cubit<HomeState> {
       endMinute = int.parse(pop2[1]);
 
       if (((currentTime.hour == startHour &&
-                  currentTime.minute >= startMinute) ||
-              currentTime.hour > startHour) &&
+          currentTime.minute >= startMinute) ||
+          currentTime.hour > startHour) &&
           ((currentTime.hour == endHour && currentTime.minute <= endMinute) ||
               currentTime.hour < endHour)) {
         return '$i';

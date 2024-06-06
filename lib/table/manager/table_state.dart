@@ -91,3 +91,14 @@ class ReloadFailure  extends TableState {
   final String errorMessage;
   ReloadFailure (this.errorMessage);
 }
+
+class ChangeValue extends TableState {
+  final String value;
+
+  ChangeValue(this.value);
+}
+class ChangeValueList extends TableState {
+  final List <String> value;
+
+  ChangeValueList(this.value);
+}

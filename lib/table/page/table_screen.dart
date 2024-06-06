@@ -14,7 +14,7 @@ import 'add_screen.dart';
 import 'delete_screen.dart';
 import 'edit_screen.dart';
 
-final cubit = TableCubit();
+final cubitTable = TableCubit();
 class TableScreen extends StatefulWidget {
   const TableScreen({super.key});
 
@@ -23,11 +23,7 @@ class TableScreen extends StatefulWidget {
 }
 
 class _TableScreenState extends State<TableScreen> {
-  // void refresh() {
-  //   setState(() {
-  //     // Trigger a rebuild of the screen
-  //   });
- // }
+
   final containerHeight = 40.sp;
   final containerWidth = 55.sp;
   String dropdownValue="";
@@ -39,14 +35,14 @@ class _TableScreenState extends State<TableScreen> {
   @override
   void initState() {
     super.initState();
-    cubit.getPeriods();
-    cubit.getRooms();
+    cubitTable.getPeriods();
+    cubitTable.getRooms();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => cubitTable,
       child: BlocBuilder<TableCubit, TableState>(
         buildWhen: (previous, current) {
           return current is Reload||
@@ -57,7 +53,9 @@ class _TableScreenState extends State<TableScreen> {
               current is UpdatePeriodsSuccessState||
               current is UpdateRoomsSuccessState||
               current is DeletePeriodsSuccessState||
-              current is DeleteRoomsSuccessState;
+              current is DeleteRoomsSuccessState||
+              current is ChangeValue||
+              current is ChangeValueList;
         },
         builder: (context, state) {
           return Scaffold(
@@ -113,43 +111,66 @@ class _TableScreenState extends State<TableScreen> {
                     },
                     onSelected: (value) {
                       if (value == 0) {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomeScreen()));
+                        // Navigator.pushReplacement(
+                        //     context,
+                        //     MaterialPageRoute(builder: (context) => const HomeScreen()));
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const HomeScreen()
+                            // showLoadingIndicatorListHome(context,
+                            // [cubit.checkSchedule, cubit.setData,cubit.getPeriods, cubit.getRooms ],)
+                          ),
+                              (Route<dynamic> route) => false,
+                        );
 
                       }
                       else if (value == 1) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider.value(
-                                  value: cubit, child: const AddScreen()),
-                            )).then((value) => (value) {
-                              cubit.getPeriods();
-                              cubit.getRooms();
-                            });
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => BlocProvider.value(
+                        //           value: cubitTable, child: const AddScreen()),
+                        //     )).then((value) => (value) {
+                        //       cubitTable.getPeriods();
+                        //       cubitTable.getRooms();
+                        //     });
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AddScreen()),
+                              (Route<dynamic> route) => false,
+                        );
                       }
                       else if (value == 2) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const EditScreen(),
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => const EditScreen(),
+                        //
+                        //     )).then((value) => (value) {
+                        //       cubitTable.getPeriods();
+                        //       cubitTable.getRooms();
+                        //     });
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const EditScreen()),
+                              (Route<dynamic> route) => false,
+                        );
 
-                            )).then((value) => (value) {
-                              cubit.getPeriods();
-                              cubit.getRooms();
-                            });
                       }
                       else if (value == 3) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const DeleteScreen(),
-                            )).then((value) => (value) {
-                              cubit.getPeriods();
-                              cubit.getRooms();
-                            });
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => const DeleteScreen(),
+                        //     )).then((value) => (value) {
+                        //       cubitTable.getPeriods();
+                        //       cubitTable.getRooms();
+                        //     });
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const DeleteScreen()),
+                              (Route<dynamic> route) => false,
+                        );
                       }
                     }),
               ],
@@ -157,8 +178,8 @@ class _TableScreenState extends State<TableScreen> {
             body: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
-                  height: (containerHeight*(cubit.days.length+1))+(10.sp+(8.sp*(cubit.days.length+2))),
-                  width: (containerWidth*(cubit.periods.length+1))+(10.sp+(8.sp*(cubit.periods.length+2))),
+                  height: (containerHeight*(cubitTable.days.length+1))+(10.sp+(8.sp*(cubitTable.days.length+2))),
+                  width: (containerWidth*(cubitTable.periods.length+1))+(10.sp+(8.sp*(cubitTable.periods.length+2))),
                   padding: EdgeInsets.all(10.sp),
                   child: PageView(
                     children: [
@@ -207,7 +228,7 @@ class _TableScreenState extends State<TableScreen> {
                                     margin: EdgeInsets.all(5.sp),
                                     child: Row(
                                       children: List<Widget>.generate(
-                                        cubit.periods.length,
+                                        cubitTable.periods.length,
                                         (index) => Container(
                                           height: containerHeight,
                                           width: containerWidth,
@@ -219,7 +240,7 @@ class _TableScreenState extends State<TableScreen> {
                                           ),
                                           child: Center(
                                             child: Text(
-                                                cubit.periods[index].duration,
+                                                cubitTable.periods[index].duration,
                                               //"period ''${index}",
                                               //"${index+1}(${cubit.periods[index].duration})",
                                               style: TextStyle(
@@ -239,7 +260,7 @@ class _TableScreenState extends State<TableScreen> {
                               height: 500.sp,
                               child: ListView.builder(
                                 scrollDirection: Axis.vertical,
-                                itemCount: cubit.days.length,
+                                itemCount: cubitTable.days.length,
                                 itemBuilder: (context, index1) => SizedBox(
                                   height: containerHeight,
                                   width: containerWidth,
@@ -257,7 +278,7 @@ class _TableScreenState extends State<TableScreen> {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            cubit.days[index1],
+                                            cubitTable.days[index1],
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                                 color: Colors.white,
@@ -271,7 +292,7 @@ class _TableScreenState extends State<TableScreen> {
                                           height: containerHeight,
                                           child: Row(
                                             children: List<Widget>.generate(
-                                              cubit.periods.length,
+                                              cubitTable.periods.length,
                                               (index2) => Container(
                                                 color: Colors.white,
                                                 child: Container(
@@ -288,9 +309,12 @@ class _TableScreenState extends State<TableScreen> {
                                                     child:DropdownButton<String>(
                                                       value: dropdownValue=subjects[index1][index2][0],
                                                       onChanged: (String? newValue){
-                                                        setState(() {
-                                                          newValue;
-                                                        });
+                                                        // setState(() {
+                                                        //   newValue;
+                                                        // });
+                                                        if (newValue!= null) {
+                                                         ChangeValue(newValue);
+                                                        }
                                                       },
                                                       items: List.generate(subjects[index1][index2].length,
                                                               (int index) {
@@ -317,8 +341,14 @@ class _TableScreenState extends State<TableScreen> {
                                                                     selectedValuesStyle:
                                                                     const TextStyle(
                                                                         color: Colors.brown),
-                                                                    onChanged: (List<String> newValue2){
-                                                                      selectedRooms = newValue2;
+                                                                    onChanged: (List<String> newValue){
+                                                                      if (newValue.isNotEmpty) {
+                                                                        selectedRooms = newValue;
+                                                                        ChangeValueList(newValue);
+                                                                      }
+                                                                      // setState(() {
+                                                                      //   selectedRooms = newValue2;
+                                                                      // });
                                                                     },
                                                                     options: existenceChecker(index1, index2),
                                                                     decoration: InputDecoration(
@@ -372,10 +402,10 @@ class _TableScreenState extends State<TableScreen> {
                                                                               }
                                                                               if(selectedRooms.isNotEmpty){
                                                                                 selectedRooms.clear();
-                                                                                cubit.updateSchedule(subjects,index1,index2);
+                                                                                cubitTable.updateSchedule(subjects,index1,index2);
                                                                                 Navigator.of(context).pop();
                                                                               }
-                                                                              cubit.updateSchedule(subjects,index1,index2);
+                                                                              cubitTable.updateSchedule(subjects,index1,index2);
                                                                             },
                                                                             child: const Text("Delete",style: TextStyle(color: Colors.brown),),
                                                                         ),
@@ -408,10 +438,10 @@ class _TableScreenState extends State<TableScreen> {
                                                                             }
                                                                             if(selectedRooms.isNotEmpty){
                                                                             selectedRooms.clear();
-                                                                            cubit.updateSchedule(subjects,index1,index2);
+                                                                            cubitTable.updateSchedule(subjects,index1,index2);
                                                                             Navigator.of(context).pop();
                                                                             }
-                                                                            cubit.updateSchedule(subjects,index1,index2);
+                                                                            cubitTable.updateSchedule(subjects,index1,index2);
                                                                           },
                                                                           child: const Text("Add",style: TextStyle(color: Colors.brown)),
                                                                         ),
@@ -458,7 +488,7 @@ class _TableScreenState extends State<TableScreen> {
     );
   }
   List<String> existenceChecker(int i, int j) {
-    List<String> roomNames = cubit.rooms.map((room) => room.name).toList();
+    List<String> roomNames = cubitTable.rooms.map((room) => room.name).toList();
 
     for (int y = 0; y < roomNames.length; y++) {
       for (int z = 0; z < subjects[i][j].length; z++) {

@@ -60,7 +60,7 @@ class _AddScreenState extends State<AddScreen> {
                           ) {
                             toast("Not allowed");
                           } else {
-                            await showLoadingIndicator(context,cubit.addPeriod);
+                            await showLoadingIndicator(context,cubitTable.addPeriod);
                             ConstantVar.periodController.clear();
                           }
                         },
@@ -97,7 +97,7 @@ class _AddScreenState extends State<AddScreen> {
                               ConstantVar.roomController.text == "") {
                             toast("Not allowed");
                           } else {
-                            await showLoadingIndicator(context,cubit.addRoom);
+                            await showLoadingIndicator(context,cubitTable.addRoom);
                             ConstantVar.roomController.clear();
                           }
                         },

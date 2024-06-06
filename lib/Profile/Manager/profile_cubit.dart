@@ -6,9 +6,9 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileInitial());
   List<User> myData = [];
 
-  void getUserData(){
+ Future<void> getUserData()async   {
     final userId=ConstantVar.auth.currentUser!.uid;
-    ConstantVar.firestore.collection("users").doc(userId)
+     await ConstantVar.firestore.collection("users").doc(userId)
         .get()
         .then((value) {
       updateUi(value.data()!);
@@ -17,11 +17,12 @@ class ProfileCubit extends Cubit<ProfileState> {
         .catchError((error){emit(GetUsersFailureState(error.toString()));});
   }
 
-  void updateUserData()  {
+  void updateUserData()   {
     final userId = ConstantVar.auth.currentUser!.uid;
     ConstantVar.firestore.collection("users").doc(userId).update({
       "Name": ConstantVar.nameController.text,
       "phone": ConstantVar.phoneController.text,
+      "gmail":ConstantVar.gmailController.text
     }).then((value) {
       toast("Done");
       emit(UpdateUsersSuccessState());})
@@ -34,6 +35,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     ConstantVar.nameController.text = map["Name"];
     ConstantVar.phoneController.text = map["phone"];
     ConstantVar.emailController.text = map["email"];
+    ConstantVar.gmailController.text = map["gmail"];
   }
 }
 

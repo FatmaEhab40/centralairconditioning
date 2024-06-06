@@ -211,25 +211,12 @@ class _LoginScreenState extends State<LoginScreen> {
     //   ),
     // );
 
-    Widget showLoadingIndicatorList(BuildContext context, List<Future<void> Function()> asyncOperations) {
-      return FutureBuilder(
-        future: Future.wait(asyncOperations.map((e) => e())),
-        builder: (BuildContext context, AsyncSnapshot snap) {
-          if (snap.connectionState != ConnectionState.waiting) {
-            return const HomeScreen();
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(color: Colors.brown),
-            );
-          }
-        },
-      );
-    }
-
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => showLoadingIndicatorList(context,
-          [cubit.checkSchedule, cubit.setData,cubit.getPeriods, cubit.getRooms ])),
+      MaterialPageRoute(builder: (context) => const HomeScreen()
+          // showLoadingIndicatorListHome(context,
+          // [cubit.checkSchedule, cubit.setData,cubit.getPeriods, cubit.getRooms ],)
+      ),
           (Route<dynamic> route) => false,
     );
   }
@@ -242,5 +229,6 @@ class _LoginScreenState extends State<LoginScreen> {
       toast(state.errorMessage);
     }
   }
+
 
 }
