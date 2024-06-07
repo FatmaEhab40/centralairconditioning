@@ -49,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor:ConstantVar.backgroundPage,
       appBar: AppBar(
         backgroundColor: ConstantVar.backgroundPage,
-        //iconTheme: const IconThemeData(color: ConstantVar.backgroundPage),
         title: GradientText(
           'Home',
           style: GoogleFonts.eagleLake(fontSize: 20.sp),
@@ -58,13 +57,21 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const TableScreen()),
-                    (Route<dynamic> route) => false,
-              );
+            onPressed: ()  async {
+              final doc = await ConstantVar.firestore.collection("DeadLock").doc("1").get();
+              final login = doc.get('Login');
+              final user=  doc.get('User');
 
+              if(login=="true"){
+                dialogPeriodBuilder(context,user);
+              }
+              else {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TableScreen()),
+                      (Route<dynamic> route) => false,
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
                 padding:
@@ -120,7 +127,8 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: IconButton(
               iconSize: 20.sp,
-              onPressed: () {
+              onPressed: () async {
+                await ConstantVar.firestore.collection("DeadLock").doc("1").set({"Login":false});
                 FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(
                     context,
@@ -180,8 +188,6 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 10.sp),
             Image.asset(
               "assets/Container_background.png",
-              // imageUrl:
-              // "https://www.sisaairconditioning.com.au/wp-content/uploads/2021/12/Ducted-Air-Conditioning-Adelaide.png",
               width: 51.sp,
             ),
             SizedBox(height: 10.sp),
@@ -202,5 +208,45 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     }
 
-
+ Future<void> dialogPeriodBuilder(BuildContext context,String user) {
+   return showDialog<void>(
+       context: context,
+       builder: (BuildContext context) {
+         return AlertDialog(
+           backgroundColor: ConstantVar.backgroundPage,
+           shape: const RoundedRectangleBorder(
+               borderRadius: BorderRadius.all(Radius.circular(30))),
+           title: GradientText(
+             "There is a user editing...\nWait few minute",
+             style: GoogleFonts.eagleLake(fontSize: 20.sp),
+             gradientType: GradientType.linear,
+             colors: ConstantVar.gradientList,
+             textAlign: TextAlign.center,
+           ),
+           content: Text("User: $user"),
+           actions: [
+             Center(
+                 child: SizedBox(
+                   width: 50.sp,
+                   child: ElevatedButton(
+                     onPressed: () {
+                       Navigator.pop(context);
+                     },
+                     style: ElevatedButton.styleFrom(
+                       backgroundColor: Colors.brown,
+                       padding: EdgeInsets.symmetric(
+                           horizontal: 5.0.sp, vertical: 5.0.sp),
+                       shape: RoundedRectangleBorder(
+                           borderRadius: BorderRadius.circular(10.0.sp)),
+                     ),
+                     child: Text(
+                       "Ok",
+                       style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                     ),
+                   ),
+                 )),
+           ],
+         );
+       });
+ }
   }

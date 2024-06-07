@@ -17,9 +17,12 @@ class LoginCubit extends Cubit<LoginState> {
 
       if (query.docs.isNotEmpty) {
         String gmail = query.docs.first.get("gmail");
+        String name = query.docs.first.get("Name");
+        print("Name: $name");
         ConstantVar.auth
             .signInWithEmailAndPassword(email: gmail, password: password)
-            .then((value) {
+            .then((value)async {
+          await ConstantVar.firestore.collection("DeadLock").doc("1").set({"Login":true, "User":name});
           emit(LoginSuccessState());
         });
       }

@@ -244,19 +244,5 @@ Future<void> showLoadingIndicatorS(BuildContext context, Future<void> Function(S
   }
 }
 
-// Widget showLoadingIndicatorListHome(BuildContext context, List<Future<void> Function()> asyncOperations) {
-//   return FutureBuilder(
-//     future: Future.wait(asyncOperations.map((e) => e())),
-//     builder: (BuildContext context, AsyncSnapshot snap) {
-//       if (snap.connectionState != ConnectionState.waiting) {
-//         return const HomeScreen() ;
-//       } else {
-//         return const Center(
-//           child: CircularProgressIndicator(color: Colors.brown),
-//         );
-//       }
-//     },
-//   );
-// }
 
 

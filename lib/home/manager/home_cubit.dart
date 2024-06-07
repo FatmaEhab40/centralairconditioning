@@ -116,8 +116,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> setData() async {
     bool c = await there(0);
-
-
     DocumentReference docRef = ConstantVar.firestore.collection('camera').doc("1");
     DocumentSnapshot doc = await docRef.get();
     if (doc.exists) {
