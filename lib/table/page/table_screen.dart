@@ -109,16 +109,12 @@ class _TableScreenState extends State<TableScreen> {
                         ),
                       ];
                     },
-                    onSelected: (value) {
+                    onSelected: (value) async {
                       if (value == 0) {
-                        // Navigator.pushReplacement(
-                        //     context,
-                        //     MaterialPageRoute(builder: (context) => const HomeScreen()));
+                        await ConstantVar.firestore.collection("DeadLock").doc("1").set({"Login":false});
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (context) => const HomeScreen()
-                            // showLoadingIndicatorListHome(context,
-                            // [cubit.checkSchedule, cubit.setData,cubit.getPeriods, cubit.getRooms ],)
                           ),
                               (Route<dynamic> route) => false,
                         );
@@ -126,14 +122,7 @@ class _TableScreenState extends State<TableScreen> {
                       }
                       else if (value == 1) {
                         // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => BlocProvider.value(
-                        //           value: cubitTable, child: const AddScreen()),
-                        //     )).then((value) => (value) {
-                        //       cubitTable.getPeriods();
-                        //       cubitTable.getRooms();
-                        //     });
+
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (context) => const AddScreen()),

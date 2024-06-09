@@ -11,8 +11,10 @@ import '../../table/page/table_screen.dart';
 import '../manager/home_cubit.dart';
 import '../manager/home_state.dart';
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final cubit = HomeCubit();
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -58,14 +60,21 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           TextButton(
             onPressed: ()  async {
-              final doc = await ConstantVar.firestore.collection("DeadLock").doc("1").get();
-              final login = doc.get('Login');
-              final user=  doc.get('User');
+              String? uid= ConstantVar.auth.currentUser!.uid;
+              QuerySnapshot query = await ConstantVar.firestore
+                  .collection("users")
+                  .where("userId", isEqualTo: uid)
+                  .get();
+              String name= query.docs.first.get("Name");
+              final queryDeadLock = await ConstantVar.firestore.collection("DeadLock").doc("1").get();
+              final login = queryDeadLock.get('Login');
+              final user=  queryDeadLock.get('User');
 
-              if(login=="true"){
+              if(login==true||user!=name){
                 dialogPeriodBuilder(context,user);
               }
               else {
+                 await ConstantVar.firestore.collection("DeadLock").doc("1").set({"Login":true, "User":name});
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const TableScreen()),
@@ -128,7 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: IconButton(
               iconSize: 20.sp,
               onPressed: () async {
-                await ConstantVar.firestore.collection("DeadLock").doc("1").set({"Login":false});
                 FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(
                     context,
@@ -216,14 +224,14 @@ class _HomeScreenState extends State<HomeScreen> {
            backgroundColor: ConstantVar.backgroundPage,
            shape: const RoundedRectangleBorder(
                borderRadius: BorderRadius.all(Radius.circular(30))),
-           title: GradientText(
+           title: Text(
              "There is a user editing...\nWait few minute",
-             style: GoogleFonts.eagleLake(fontSize: 20.sp),
-             gradientType: GradientType.linear,
-             colors: ConstantVar.gradientList,
+             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
              textAlign: TextAlign.center,
            ),
-           content: Text("User: $user"),
+           content: Text("User: $user",
+             style: GoogleFonts.eagleLake(fontSize: 20.sp),
+             textAlign: TextAlign.center),
            actions: [
              Center(
                  child: SizedBox(

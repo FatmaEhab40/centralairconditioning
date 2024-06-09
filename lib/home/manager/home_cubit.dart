@@ -116,6 +116,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> setData() async {
     bool c = await there(0);
+
+
     DocumentReference docRef = ConstantVar.firestore.collection('camera').doc("1");
     DocumentSnapshot doc = await docRef.get();
     if (doc.exists) {
@@ -175,8 +177,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   }
 
-
-
   Future<void> fetchData(int index) async {
     var response = await http.get(Uri.parse('http://10.0.2.2:5000/api'));
     if (response.statusCode == 200) {
@@ -224,6 +224,7 @@ class HomeCubit extends Cubit<HomeState> {
     for (int index = 0; index < rooms.length; index++) {
       if (currentPeriod() != 'null') {
         bool foundInSchedule = false; // Track if the room is in the schedule
+
         for (int i = 0; i < subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())].length; i++) {
           if (subjects[getCurrentDayOfWeek()][int.parse(currentPeriod())][i] == rooms[index].name) {
             rooms[index].inSchedule = "true";
@@ -234,15 +235,12 @@ class HomeCubit extends Cubit<HomeState> {
         }
 
         if (!foundInSchedule) {
-
           rooms[index].inSchedule = "false";
           emit(Reload());
         }
       }
     }
   }
-
-
 
   int getCurrentDayOfWeek() {
     List<int> daysOfWeek = [2, 3, 4, 5, 6, 0, 1];
@@ -281,6 +279,4 @@ class HomeCubit extends Cubit<HomeState> {
     }
     return 'null';
   }
-
-
 }
